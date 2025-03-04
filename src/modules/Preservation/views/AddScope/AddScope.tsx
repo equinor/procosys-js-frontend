@@ -354,10 +354,30 @@ const AddScope = (): JSX.Element => {
                 error.message,
                 error.data
             );
+
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.data) {
+                switch (error.data.status) {
+                    case 401:
+                        errorMessage = 'You are not authorized';
+                        break;
+                    case 403:
+                        errorMessage =
+                            'You do not have permission to access this resource.';
+                        break;
+                    case 404:
+                        errorMessage = 'The requested resource was not found.';
+                        break;
+                    case 500:
+                        errorMessage =
+                            'An unexpected error occurred. Please try again later.';
+                        break;
+                }
+            }
             showSnackbarNotification(
-                error.data?.data?.length > 0
-                    ? error.data.data[0]
-                    : error.message,
+                error.data?.data?.errors
+                    ? Object.values(error.data.data.errors).join('\n')
+                    : errorMessage,
                 10000
             );
         }

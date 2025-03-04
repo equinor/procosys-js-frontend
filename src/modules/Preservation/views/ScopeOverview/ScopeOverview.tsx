@@ -51,7 +51,7 @@ import UndoStartPreservationDialog from './Dialogs/UndoStartPreservationDialog';
 import UpdateRequirementsDialog from './Dialogs/UpdateRequirementsDialog';
 import UpdateJourneyDialog from './Dialogs/UpdateJourneyDialog';
 import { KeyboardArrowUp, KeyboardArrowDown } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import { Tooltip } from '@equinor/eds-core-react';
 import { updateSavedTagListFilters } from './apiCalls';
 import { showInServiceDialog } from './dialogsAndModals';
 import {
@@ -154,7 +154,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
     const location = useLocation();
     const analytics = useAnalytics();
-    const { plant } = useCurrentPlant();
+    const { plant, permissions } = useCurrentPlant();
 
     const numberOfFilters: number = Object.values(tagListFilter).filter(
         (v) => v && JSON.stringify(v) != '[]'
@@ -1047,47 +1047,71 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                     PO number: {purchaseOrderNumber}
                                 </div>
                             )}
-                            <Dropdown
-                                disabled={project.id === -1}
-                                text="Add scope"
+
+                            <Tooltip
+                                title={
+                                    !permissions.includes(
+                                        'PRESERVATION_PLAN/CREATE'
+                                    )
+                                        ? 'You do not have permission to add scope'
+                                        : ''
+                                }
                             >
-                                <Link to={`AddScope/selectTagsManual`}>
-                                    <DropdownItem>
-                                        Add tags manually
-                                    </DropdownItem>
-                                </Link>
-                                <Link to={'AddScope/selectTagsAutoscope'}>
-                                    <DropdownItem>
-                                        Autoscope by tag function
-                                    </DropdownItem>
-                                </Link>
-                                <Link to={'AddScope/createDummyTag'}>
-                                    <DropdownItem>
-                                        Create dummy tag
-                                    </DropdownItem>
-                                </Link>
-                                <Link
-                                    to={
-                                        duplicatableTagSelected
-                                            ? 'AddScope/duplicateDummyTag/' +
-                                              (selectedTags.length == 1
-                                                  ? selectedTags[0].id.toString()
-                                                  : '')
-                                            : '/'
-                                    }
-                                >
-                                    <DropdownItem
-                                        disabled={!duplicatableTagSelected}
+                                <div>
+                                    <Dropdown
+                                        disabled={
+                                            project.id === -1 ||
+                                            !permissions.includes(
+                                                'PRESERVATION_PLAN/CREATE'
+                                            )
+                                        }
+                                        text="Add scope"
                                     >
-                                        Duplicate dummy tag
-                                    </DropdownItem>
-                                </Link>
-                                <Link to={'AddScope/selectMigrateTags'}>
-                                    <DropdownItem>
-                                        Migrate tags from old (temporary)
-                                    </DropdownItem>
-                                </Link>
-                            </Dropdown>
+                                        <Link to={`AddScope/selectTagsManual`}>
+                                            <DropdownItem>
+                                                Add tags manually
+                                            </DropdownItem>
+                                        </Link>
+                                        <Link
+                                            to={'AddScope/selectTagsAutoscope'}
+                                        >
+                                            <DropdownItem>
+                                                Autoscope by tag function
+                                            </DropdownItem>
+                                        </Link>
+                                        <Link to={'AddScope/createDummyTag'}>
+                                            <DropdownItem>
+                                                Create dummy tag
+                                            </DropdownItem>
+                                        </Link>
+                                        <Link
+                                            to={
+                                                duplicatableTagSelected
+                                                    ? 'AddScope/duplicateDummyTag/' +
+                                                      (selectedTags.length == 1
+                                                          ? selectedTags[0].id.toString()
+                                                          : '')
+                                                    : '/'
+                                            }
+                                        >
+                                            <DropdownItem
+                                                disabled={
+                                                    !duplicatableTagSelected
+                                                }
+                                            >
+                                                Duplicate dummy tag
+                                            </DropdownItem>
+                                        </Link>
+                                        <Link to={'AddScope/selectMigrateTags'}>
+                                            <DropdownItem>
+                                                Migrate tags from old
+                                                (temporary)
+                                            </DropdownItem>
+                                        </Link>
+                                    </Dropdown>
+                                </div>
+                            </Tooltip>
+
                             <IconBar className="showOnlyOnTablet">
                                 <Button
                                     onClick={preservedDialog}

@@ -7,7 +7,7 @@ import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 import { hot } from 'react-hot-loader';
 
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -33,8 +33,9 @@ const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
 
-    const [registerCode, setRegisterCode] = useState('');
-    const [tagFunctionCode, setTagFunctionCode] = useState('');
+    const [searchParams] = useSearchParams();
+    const registerCode = searchParams.get('registerCode') ?? '';
+    const tagFunctionCode = searchParams.get('tagFunctionCode') ?? '';
 
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
     const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
@@ -100,11 +101,6 @@ const Library = (): JSX.Element => {
     };
 
     const extractAndSetItemId = (segments: string[]): void => {
-        const lastSegment = segments[segments.length - 1];
-        const parts = lastSegment.split('&');
-        setRegisterCode(parts[0]);
-        setTagFunctionCode(parts[1]);
-
         const itemIdPattern = libraryTypePrefixId.join('|');
         const regex = new RegExp(`(${itemIdPattern})([^/]+)`, 'i');
         const matchedSegments = segments.join('/').match(regex);

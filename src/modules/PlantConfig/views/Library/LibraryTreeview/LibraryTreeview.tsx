@@ -187,7 +187,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                 await libraryApiClient.getTagFunctions(registerCode);
             tagFunctions.map((tf) => {
                 children.push({
-                    id: `tf_register_${registerCode}_${tf.code}`,
+                    id: `?registerCode=${registerCode}&tagFunctionCode=${tf.code}`,
                     name: `${tf.code}, ${tf.description}`,
                     // TODO: isVoided (need data from API)
                     onClick: (): void =>
@@ -217,7 +217,7 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             registers.map((reg) => {
                 children.push({
                     id: `tf_register_${reg.code}`,
-                    name: reg.description,
+                    name: `${reg.code}, ${reg.description}`,
                     // TODO: isVoided (need data from API)
                     getChildren: () => getTagFunctionNodes(reg.code),
                 });
@@ -230,7 +230,6 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
             );
             showSnackbarNotification('Failed to process register nodes');
         }
-
         return children;
     };
 

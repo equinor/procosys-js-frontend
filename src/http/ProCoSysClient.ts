@@ -27,6 +27,7 @@ interface TagFunctionResponse {
     id: number;
     code: string;
     description: string;
+    registerCode: string;
     registerDescription: string;
 }
 

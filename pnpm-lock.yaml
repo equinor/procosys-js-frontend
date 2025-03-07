@@ -440,9 +440,6 @@ importers:
       prettier:
         specifier: ^3.1.1
         version: 3.3.3
-      react-hot-loader:
-        specifier: ^4.13.1
-        version: 4.13.1(@types/react@17.0.20)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       sass-extract:
         specifier: ^3.0.0
         version: 3.0.0(node-sass@9.0.0)(sass@1.80.1)
@@ -6735,17 +6732,6 @@ packages:
     resolution: {integrity: sha512-asCxy+jCehDVhusNmCBoxDf2mm1AJ//D+EzDx1m5K7EqsMBIHdZ5G4LdwbSEXqZq1Ros0G0UySWmAtntSph7XA==}
     peerDependencies:
       react: ^0.14.0 || ^15.0.0 || ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
-
-  react-hot-loader@4.13.1:
-    resolution: {integrity: sha512-ZlqCfVRqDJmMXTulUGic4lN7Ic1SXgHAFw7y/Jb7t25GBgTR0fYAJ8uY4mrpxjRyWGWmqw77qJQGnYbzCvBU7g==}
-    engines: {node: '>= 6'}
-    peerDependencies:
-      '@types/react': ^15.0.0 || ^16.0.0 || ^17.0.0
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0
-      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
 
   react-hotkeys-hook@3.4.7:
     resolution: {integrity: sha512-+bbPmhPAl6ns9VkXkNNyxlmCAIyDAcWbB76O4I0ntr3uWCRuIQf/aRLartUahe9chVMPj+OEzzfk3CQSjclUEQ==}
@@ -16709,21 +16695,6 @@ snapshots:
       memoize-one: 4.0.3
       prop-types: 15.8.1
       react: 17.0.2
-
-  react-hot-loader@4.13.1(@types/react@17.0.20)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
-    dependencies:
-      fast-levenshtein: 2.0.6
-      global: 4.4.0
-      hoist-non-react-statics: 3.3.2
-      loader-utils: 2.0.4
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      react-lifecycles-compat: 3.0.4
-      shallowequal: 1.1.0
-      source-map: 0.7.4
-    optionalDependencies:
-      '@types/react': 17.0.20
 
   react-hotkeys-hook@3.4.7(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
     dependencies:

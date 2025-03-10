@@ -2,10 +2,8 @@ import { Container, Divider, LibraryItemContainer } from './Library.style';
 import React, { useEffect, useReducer, useState } from 'react';
 
 import { Helmet } from 'react-helmet';
-//import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
-import { hot } from 'react-hot-loader';
 
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 

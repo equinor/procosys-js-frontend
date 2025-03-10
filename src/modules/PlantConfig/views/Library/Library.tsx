@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
 
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -30,6 +30,11 @@ const libraryTypePrefixId = [
 const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
+
+    const [searchParams] = useSearchParams();
+    const registerCode = searchParams.get('registerCode') ?? '';
+    const tagFunctionCode = searchParams.get('tagFunctionCode') ?? '';
+
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
     const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
     const { pathname } = useLocation();
@@ -99,11 +104,7 @@ const Library = (): JSX.Element => {
         const matchedSegments = segments.join('/').match(regex);
 
         if (matchedSegments && matchedSegments.length >= 3) {
-            let extractedId = matchedSegments[2];
-
-            if (matchedSegments[1].toLowerCase().startsWith('tf_register_')) {
-                extractedId = extractedId.replace(/_/g, '|');
-            }
+            const extractedId = matchedSegments[2];
             setSelectedLibraryItem(extractedId);
         }
     };
@@ -138,6 +139,8 @@ const Library = (): JSX.Element => {
                                 forceUpdate={update}
                                 libraryType={selectedLibraryType}
                                 libraryItem={selectedLibraryItem}
+                                tagFunctionCode={tagFunctionCode}
+                                registerCode={registerCode}
                                 setSelectedLibraryType={setSelectedLibraryType}
                                 setSelectedLibraryItem={setSelectedLibraryItem}
                                 setDirtyLibraryType={setDirtyLibraryType}

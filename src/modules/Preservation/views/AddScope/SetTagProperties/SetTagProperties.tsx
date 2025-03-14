@@ -151,39 +151,50 @@ const SetTagProperties = ({
 
     const submit = async (): Promise<void> => {
         if (step) {
-            if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
-                await submitForm(step.id, [], remark, storageArea);
-            } else {
-                const requirementsMappedForApi: Requirement[] = [];
-                requirements.forEach((req) => {
-                    if (
-                        req.intervalWeeks != null &&
-                        req.requirementDefinitionId != null
-                    ) {
-                        requirementsMappedForApi.push({
-                            requirementDefinitionId:
-                                req.requirementDefinitionId,
-                            intervalWeeks: req.intervalWeeks,
-                        });
-                    }
-                });
-                if (requirementsMappedForApi.length > 0) {
-                    await submitForm(
-                        step.id,
-                        requirementsMappedForApi,
-                        remark,
-                        storageArea
-                    );
+            try {
+                if (addScopeMethod === AddScopeMethod.AddTagsAutoscope) {
+                    await submitForm(step.id, [], remark, storageArea);
                 } else {
-                    showSnackbarNotification(
-                        'Error occured. Requirements are not provided.',
-                        5000
-                    );
+                    const requirementsMappedForApi: Requirement[] = [];
+                    requirements.forEach((req) => {
+                        if (
+                            req.intervalWeeks != null &&
+                            req.requirementDefinitionId != null
+                        ) {
+                            requirementsMappedForApi.push({
+                                requirementDefinitionId:
+                                    req.requirementDefinitionId,
+                                intervalWeeks: req.intervalWeeks,
+                            });
+                        }
+                    });
+
+                    if (requirementsMappedForApi.length > 0) {
+                        await submitForm(
+                            step.id,
+                            requirementsMappedForApi,
+                            remark,
+                            storageArea
+                        );
+                    } else {
+                        showSnackbarNotification(
+                            'Error occurred. Requirements are not provided.',
+                            5000
+                        );
+                        return;
+                    }
                 }
+
+                unsetDirtyStateFor(moduleName);
+            } catch (error) {
+                showSnackbarNotification(
+                    'Error occurred during submission.',
+                    5000
+                );
             }
         } else {
             showSnackbarNotification(
-                'Error occured. Step is not provided.',
+                'Error occurred. Step is not provided.',
                 5000
             );
         }

@@ -184,6 +184,7 @@ interface JourneyResponse {
     title: string;
     isVoided: boolean;
     isInUse: boolean;
+    project?: ProjectDetails;
     steps: [
         {
             id: number;

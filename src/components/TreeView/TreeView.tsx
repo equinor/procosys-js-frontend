@@ -322,7 +322,6 @@ const TreeView = ({
                         isVoided={node.isVoided === true}
                         title={node.name}
                         onClick={(): void => selectNode(node)}
-                        isSelected={node.isSelected ? true : false}
                     >
                         {node.name}
                     </NodeLink>

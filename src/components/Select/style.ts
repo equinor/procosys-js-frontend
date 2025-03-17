@@ -125,7 +125,7 @@ export const SelectableItem = styled.li<SelectableItemProps>`
     }
 
     :hover > ul {
-        display: block;
+        visibility: visible;
     }
 `;
 
@@ -140,7 +140,7 @@ SelectableItem.defaultProps = {
 };
 
 export const CascadingItem = styled.ul`
-    display: none;
+    visibility: hidden;
     background-color: transparent;
     left: 100%;
     top: -1px;

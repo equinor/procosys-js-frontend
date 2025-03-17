@@ -111,7 +111,6 @@ const Library = (): JSX.Element => {
     };
 
     return (
-        // <<<<<<< HEAD
         <LibraryProvider>
             <Container>
                 {selectedLibraryType && (

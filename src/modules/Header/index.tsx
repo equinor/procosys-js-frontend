@@ -151,10 +151,17 @@ const Header: React.FC = (): JSX.Element => {
         setSearchValue('');
         setSearchResult(undefined);
 
+        const newPlantId = filteredPlants[plantIndex].value;
         const currentPath = location.pathname.split('/');
-        currentPath[1] = filteredPlants[plantIndex].value;
-        const newPath = currentPath.join('/');
-        navigate(newPath);
+
+        if (currentPath.includes('libraryv2')) {
+            console.log('Detected libraryv2, resetting path...');
+            navigate(`/${newPlantId}/libraryv2/`);
+        } else {
+            currentPath[1] = newPlantId;
+            const newPath = currentPath.join('/');
+            navigate(newPath);
+        }
     };
 
     const cancelerRef = useRef<Canceler | null>();

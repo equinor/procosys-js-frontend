@@ -17,7 +17,6 @@ import {
 } from './AddScope.style';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import { Canceler } from 'axios';
 import CreateDummyTag from './CreateDummyTag/CreateDummyTag';
 import { SelectItem } from '../../../../components/Select';
@@ -30,6 +29,7 @@ import { Typography } from '@equinor/eds-core-react';
 import { showSnackbarNotification } from './../../../../core/services/NotificationService';
 import { usePreservationContext } from '../../context/PreservationContext';
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
+import { getErrorMessage } from '@procosys/util/functions';
 
 export enum AddScopeMethod {
     AddTagsManually = 'AddTagsManually',
@@ -355,10 +355,11 @@ const AddScope = (): JSX.Element => {
                 error.message,
                 error.data
             );
+
             showSnackbarNotification(
-                error.data?.data?.length > 0
-                    ? error.data.data[0]
-                    : error.message,
+                error.data?.data?.errors
+                    ? Object.values(error.data.data.errors).join('\n')
+                    : getErrorMessage(error),
                 10000
             );
         }

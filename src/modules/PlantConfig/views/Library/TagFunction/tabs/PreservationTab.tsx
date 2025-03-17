@@ -12,7 +12,6 @@ import PreservationApiClient from '@procosys/modules/Preservation/http/Preservat
 import { RequirementType } from './types';
 import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
 import Spinner from '@procosys/components/Spinner';
-import { hot } from 'react-hot-loader';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import {

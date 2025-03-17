@@ -13,6 +13,8 @@ type LibraryItemProps = {
     forceUpdate: number;
     libraryType: string;
     libraryItem: string;
+    tagFunctionCode: string;
+    registerCode: string;
     setSelectedLibraryType: (libraryType: string) => void;
     setSelectedLibraryItem: (libraryItem: string) => void;
     setDirtyLibraryType: (libraryType: string) => void;
@@ -21,12 +23,10 @@ type LibraryItemProps = {
 const LibraryItemDetails = (props: LibraryItemProps): JSX.Element => {
     switch (props.libraryType) {
         case LibraryType.TAG_FUNCTION: {
-            const [registerCode, tagFunctionCode] =
-                props.libraryItem.split('|');
             return (
                 <TagFunction
-                    tagFunctionCode={tagFunctionCode}
-                    registerCode={registerCode}
+                    tagFunctionCode={props.tagFunctionCode}
+                    registerCode={props.registerCode}
                 />
             );
         }

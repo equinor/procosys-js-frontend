@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import {
     Breadcrumbs,
     Container,
@@ -27,6 +28,7 @@ interface TagFunction {
     id: number;
     code: string;
     description: string;
+    registerCode: string;
     registerDescription: string;
 }
 
@@ -60,7 +62,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
         return (): void => {
             requestCancellor && requestCancellor();
         };
-    }, [props]);
+    }, [props.registerCode, props.tagFunctionCode]);
 
     useEffect(() => {
         setTagFunctionData(null);
@@ -77,8 +79,9 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
     return (
         <Container>
             <Breadcrumbs>
-                Library / Tag functions / {tagFunctionData.registerDescription}{' '}
-                / {tagFunctionData.code}, {tagFunctionData.description}
+                Library / Tag functions / {tagFunctionData.registerCode},{' '}
+                {tagFunctionData.registerDescription} / {tagFunctionData.code},{' '}
+                {tagFunctionData.description}
             </Breadcrumbs>
             <DetailsSection>
                 <Typography variant="h3">
@@ -88,7 +91,7 @@ const TagFunction = (props: TagFunctionProps): JSX.Element => {
                     <div className="inputRow">
                         <TextField
                             id="inp_register"
-                            value={tagFunctionData.registerDescription}
+                            value={`${tagFunctionData.registerCode}, ${tagFunctionData.registerDescription}`}
                             label="Register"
                             disabled
                         />

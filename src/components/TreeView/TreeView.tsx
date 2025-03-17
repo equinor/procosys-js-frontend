@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     TreeContainer,
     NodeContainer,
@@ -113,7 +113,6 @@ const TreeView = ({
             children = await node.getChildren();
             setLoading(null);
         }
-
         // set parent relation for all children
         children.forEach((child) => (child.parentId = node.id));
 
@@ -318,6 +317,7 @@ const TreeView = ({
             >
                 {node.onClick ? (
                     <NodeLink
+                        to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
                         title={node.name}
@@ -609,7 +609,6 @@ const TreeView = ({
 
     useEffect(() => {
         let isMounted = true;
-
         const nodeNames = pathname
             .split('/')
             .filter((name) => name.trim() !== '')

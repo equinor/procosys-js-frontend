@@ -1,15 +1,11 @@
 import { Container, Divider, LibraryItemContainer } from './Library.style';
 import React, { useEffect, useReducer, useState } from 'react';
-
 import { Helmet } from 'react-helmet';
-//import withAccessControl from '../../../../core/security/withAccessControl';
 import LibraryItemDetails from './LibraryItemDetails';
 import LibraryTreeview, {
     LibraryProvider,
 } from './LibraryTreeview/LibraryTreeview';
-import { hot } from 'react-hot-loader';
-
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 export enum LibraryType {
     TAG_FUNCTION = 'TagFunction',
@@ -34,6 +30,11 @@ const libraryTypePrefixId = [
 const Library = (): JSX.Element => {
     const [selectedLibraryType, setSelectedLibraryType] = useState('');
     const [selectedLibraryItem, setSelectedLibraryItem] = useState('');
+
+    const [searchParams] = useSearchParams();
+    const registerCode = searchParams.get('registerCode') ?? '';
+    const tagFunctionCode = searchParams.get('tagFunctionCode') ?? '';
+
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
     const { pathname } = useLocation();
     const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
@@ -104,16 +105,13 @@ const Library = (): JSX.Element => {
         const matchedSegments = segments.join('/').match(regex);
 
         if (matchedSegments && matchedSegments.length >= 3) {
-            let extractedId = matchedSegments[2];
-
-            if (matchedSegments[1].toLowerCase().startsWith('tf_register_')) {
-                extractedId = extractedId.replace(/_/g, '|');
-            }
+            const extractedId = matchedSegments[2];
             setSelectedLibraryItem(extractedId);
         }
     };
 
     return (
+        // <<<<<<< HEAD
         <LibraryProvider>
             <Container>
                 {selectedLibraryType && (
@@ -145,6 +143,8 @@ const Library = (): JSX.Element => {
                                     forceUpdate={update}
                                     libraryType={selectedLibraryType}
                                     libraryItem={selectedLibraryItem}
+                                    tagFunctionCode={tagFunctionCode}
+                                    registerCode={registerCode}
                                     setSelectedLibraryType={
                                         setSelectedLibraryType
                                     }

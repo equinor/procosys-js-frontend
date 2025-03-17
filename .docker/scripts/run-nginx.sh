@@ -15,6 +15,7 @@ envsubst '
   ${CLIENT_ID}
   ${SCOPES}
   ${FEATURE_FLAGS}
+  ${HEADER_COLOR}
   ' </usr/share/nginx/html/index.html >/usr/share/nginx/html/tmp.html
 mv /usr/share/nginx/html/tmp.html /usr/share/nginx/html/index.html
 nginx -g 'daemon off;'

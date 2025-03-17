@@ -1,10 +1,10 @@
 import { Container, Divider, LibraryItemContainer } from './Library.style';
 import React, { useEffect, useReducer, useState } from 'react';
-
 import { Helmet } from 'react-helmet';
 import LibraryItemDetails from './LibraryItemDetails';
-import LibraryTreeview from './LibraryTreeview/LibraryTreeview';
-
+import LibraryTreeview, {
+    LibraryProvider,
+} from './LibraryTreeview/LibraryTreeview';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 
 export enum LibraryType {
@@ -36,8 +36,9 @@ const Library = (): JSX.Element => {
     const tagFunctionCode = searchParams.get('tagFunctionCode') ?? '';
 
     const [dirtyLibraryType, setDirtyLibraryType] = useState('');
-    const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
     const { pathname } = useLocation();
+    const [update, forceUpdate] = useReducer((x) => x + 1, 0); // Used to force an update on library content pane for top level tree nodes
+
     useEffect(() => {
         const pathSegments = window.location.pathname
             .split('/')
@@ -110,46 +111,54 @@ const Library = (): JSX.Element => {
     };
 
     return (
-        <Container>
-            {selectedLibraryType && (
-                <Helmet>
-                    <title>{` - ${selectedLibraryType}`}</title>
-                </Helmet>
-            )}
-            <LibraryTreeview
-                selectedLibraryItem={selectedLibraryItem}
-                forceUpdate={forceUpdate}
-                setSelectedLibraryType={setSelectedLibraryType}
-                setSelectedLibraryItem={setSelectedLibraryItem}
-                dirtyLibraryType={dirtyLibraryType}
-                resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
-            />
-
-            <Divider />
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <LibraryItemContainer
-                            addPaddingRight={
-                                selectedLibraryType !== LibraryType.TAG_FUNCTION
-                            }
-                        >
-                            <LibraryItemDetails
-                                forceUpdate={update}
-                                libraryType={selectedLibraryType}
-                                libraryItem={selectedLibraryItem}
-                                tagFunctionCode={tagFunctionCode}
-                                registerCode={registerCode}
-                                setSelectedLibraryType={setSelectedLibraryType}
-                                setSelectedLibraryItem={setSelectedLibraryItem}
-                                setDirtyLibraryType={setDirtyLibraryType}
-                            />
-                        </LibraryItemContainer>
-                    }
+        // <<<<<<< HEAD
+        <LibraryProvider>
+            <Container>
+                {selectedLibraryType && (
+                    <Helmet>
+                        <title>{` - ${selectedLibraryType}`}</title>
+                    </Helmet>
+                )}
+                <LibraryTreeview
+                    selectedLibraryItem={selectedLibraryItem}
+                    forceUpdate={forceUpdate}
+                    setSelectedLibraryType={setSelectedLibraryType}
+                    setSelectedLibraryItem={setSelectedLibraryItem}
+                    dirtyLibraryType={dirtyLibraryType}
+                    resetDirtyLibraryType={(): void => setDirtyLibraryType('')}
                 />
-            </Routes>
-        </Container>
+
+                <Divider />
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <LibraryItemContainer
+                                addPaddingRight={
+                                    selectedLibraryType !==
+                                    LibraryType.TAG_FUNCTION
+                                }
+                            >
+                                <LibraryItemDetails
+                                    forceUpdate={update}
+                                    libraryType={selectedLibraryType}
+                                    libraryItem={selectedLibraryItem}
+                                    tagFunctionCode={tagFunctionCode}
+                                    registerCode={registerCode}
+                                    setSelectedLibraryType={
+                                        setSelectedLibraryType
+                                    }
+                                    setSelectedLibraryItem={
+                                        setSelectedLibraryItem
+                                    }
+                                    setDirtyLibraryType={setDirtyLibraryType}
+                                />
+                            </LibraryItemContainer>
+                        }
+                    />
+                </Routes>
+            </Container>
+        </LibraryProvider>
     );
 };
 

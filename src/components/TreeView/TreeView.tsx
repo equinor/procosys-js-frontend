@@ -8,7 +8,10 @@ import {
 } from './style';
 import Spinner from '../Spinner';
 import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLibraryContext } from '@procosys/modules/PlantConfig/views/Library/LibraryTreeview/LibraryTreeview';
+import { Journey } from '@procosys/modules/PlantConfig/views/Library/PreservationJourney/types/Journey';
+import { useDirtyContext } from '@procosys/core/DirtyContext';
 
 /**
  * @param id Unique identifier across all nodes in the tree (number or string).
@@ -56,6 +59,25 @@ const TreeView = ({
     const [isNodeExpanded, setIsNodeExpanded] = useState(false);
     const [executionCount, setExecutionCount] = useState(0);
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const { newJourney } = useLibraryContext();
+    const { saveTriggered, setSaveTriggered } = useLibraryContext();
+    const { unsetDirtyStateFor, isDirty } = useDirtyContext();
+    const moduleName = 'PreservationJourneyForm';
+    const [navigateNewJourney, setnavigateNewJourney] = useState<string | null>(
+        null
+    );
+    const [childOldNode, setChildOldNode] = useState<NodeData | null>(null);
+    const [parentOldNode, setParentOldNode] = useState<NodeData | null>(null);
+    const [childNewNode, setChildNewNode] = useState<NodeData | null>(null);
+    const [parentNewNode, setParentNewNode] = useState<NodeData | null>(null);
+    const isDataReady = !!(
+        childOldNode &&
+        parentOldNode &&
+        childNewNode &&
+        parentNewNode
+    );
+
     const getNodeChildCountAndCollapse = (
         parentNodeId: string | number
     ): number => {
@@ -247,7 +269,7 @@ const TreeView = ({
         node.onClick && node.onClick();
     };
 
-    const getParentPath = (node: NodeData, treeData: NodeData[]): any => {
+    const getParentPath = (node: NodeData, treeData: NodeData[]): string[] => {
         if (!node.parentId) {
             return [node.name];
         } else {
@@ -272,19 +294,19 @@ const TreeView = ({
         }
     };
 
+    const getBasePath = (pathname: string): string => {
+        const segments = pathname.split('/').filter(Boolean);
+        return `/${segments[0]}/${segments[1]}`;
+    };
+
     const getNodeLink = (node: NodeData): JSX.Element => {
-        const getBasePath = (pathname: string): string => {
-            const segments = pathname.split('/').filter(Boolean);
-            const basePath = `/${segments[0]}/${segments[1]}`;
-            return basePath;
-        };
         const baseLibraryPath = getBasePath(pathname);
         const parentPath = constructPath(node, treeData);
         const finalPath = `${baseLibraryPath}/${parentPath}`;
 
         const linkContent = (
             <NodeName
-                hasChildren={node.getChildren ? true : false}
+                hasChildren={!!node.getChildren}
                 isExpanded={node.isExpanded === true}
                 isVoided={node.isVoided === true}
                 isSelected={
@@ -298,6 +320,8 @@ const TreeView = ({
                         to={finalPath}
                         isExpanded={node.isExpanded === true}
                         isVoided={node.isVoided === true}
+                        title={node.name}
+                        onClick={(): void => selectNode(node)}
                     >
                         {node.name}
                     </NodeLink>
@@ -310,7 +334,12 @@ const TreeView = ({
             return (
                 <Link
                     to={finalPath}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    title={node.name}
+                    style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        width: '100%',
+                    }}
                 >
                     {linkContent}
                 </Link>
@@ -389,10 +418,137 @@ const TreeView = ({
                     setIsNodeExpanded,
                     checkMounted
                 );
-            } else {
-                console.log('Root node not found');
             }
         }
+    };
+
+    const storeInfoMoveNewJourney = async (
+        newJourney: Journey
+    ): Promise<void> => {
+        const childOldId = newJourney?.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney?.title;
+
+        const projectName = newJourney?.project?.name;
+        const projectDescription = newJourney?.project?.description;
+        const parentNewName = `${projectName} ${projectDescription}`;
+        const parentNewProjectId = `project_${parentNewName}`;
+
+        const childOldNode = treeData.find(
+            (node) =>
+                node.id === childOldJourneyId && node.name == childOldTitle
+        );
+
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        const parentNewNode = treeData.find(
+            (node) =>
+                node.name === parentNewName && node.id === parentNewProjectId
+        );
+
+        if (parentOldNode) {
+            setParentOldNode(parentOldNode);
+        }
+
+        if (childOldNode) {
+            setChildOldNode(childOldNode);
+        }
+
+        if (parentNewNode) {
+            if (typeof parentNewNode.getChildren === 'function') {
+                try {
+                    const children = await parentNewNode.getChildren();
+
+                    const childNewNode = children.find(
+                        (child) => child.id === childOldJourneyId
+                    );
+
+                    if (childNewNode) {
+                        setChildNewNode(childNewNode);
+                        setParentNewNode(parentNewNode);
+                        clearInfoNewJourney();
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error fetching children for '${parentNewNode}':`,
+                        error
+                    );
+                }
+            }
+        }
+    };
+
+    const moveNewJourney = async (): Promise<void> => {
+        if (childOldNode && parentOldNode && childNewNode && parentNewNode) {
+            const baseLibraryPath = getBasePath(pathname);
+            const parentPath = constructPath(parentNewNode, treeData)
+                .split('/')
+                .filter((segment) => !segment.startsWith('project_'))
+                .join('/');
+            const childPath = `${childNewNode.name}/${childNewNode.id}`;
+
+            const fullPath = encodeURI(
+                `${baseLibraryPath}/${parentPath}/${childPath}`
+            );
+
+            const updatedTreeData = treeData.map((node) => {
+                if (node.id === parentOldNode.id) {
+                    return {
+                        ...node,
+                        isExpanded: false,
+                        isSelected: false,
+                    };
+                }
+                return node;
+            });
+            setTreeData(updatedTreeData);
+
+            unsetDirtyStateFor(moduleName);
+            setnavigateNewJourney(fullPath);
+            clearInfoNewJourney();
+        }
+    };
+
+    const resetNewJourney = async (newJourney: Journey): Promise<void> => {
+        const childOldId = newJourney.id;
+        const childOldJourneyId = `journey_${childOldId}`;
+        const childOldTitle = newJourney.title;
+
+        const childOldNode = treeData.find(
+            (node) => node.id === childOldJourneyId
+        );
+
+        const parentOldNode = treeData.find(
+            (node) => node.id === childOldNode?.parentId
+        );
+
+        if (parentOldNode) {
+            const baseLibraryPath = getBasePath(pathname);
+            const parentPath = constructPath(parentOldNode, treeData)
+                .split('/')
+                .filter((segment) => !segment.startsWith('project_'))
+                .slice(0, -1)
+                .join('/');
+            const journeyPath = 'Journey available across projects';
+            const childPath = `${childOldTitle}/${childOldJourneyId}`;
+
+            const fullPath = encodeURI(
+                `${baseLibraryPath}/${parentPath}/${journeyPath}/${childPath}`
+            );
+
+            unsetDirtyStateFor(moduleName);
+            setnavigateNewJourney(fullPath);
+            clearInfoNewJourney();
+        }
+    };
+
+    const clearInfoNewJourney = (): void => {
+        setChildOldNode(null);
+        setParentOldNode(null);
+        setChildNewNode(null);
+        setParentNewNode(null);
     };
 
     useEffect(() => {
@@ -420,7 +576,11 @@ const TreeView = ({
                         const node = treeData.find(
                             (node) => node.id === nodeId
                         );
-                        if (node && !node.isExpanded) {
+                        if (
+                            node &&
+                            !node.isExpanded &&
+                            node.isExpanded !== false
+                        ) {
                             await expandNode(node);
                         }
                     }
@@ -473,6 +633,28 @@ const TreeView = ({
             isMounted = false;
         };
     }, [pathname, treeData, isNodeExpanded]);
+
+    useEffect(() => {
+        storeInfoMoveNewJourney(newJourney);
+    }, [newJourney, treeData]);
+
+    useEffect(() => {
+        if (newJourney?.project && saveTriggered && isDataReady) {
+            moveNewJourney();
+            setSaveTriggered(false);
+        } else if (newJourney?.project === undefined && saveTriggered) {
+            resetNewJourney(newJourney);
+            setSaveTriggered(false);
+        }
+    }, [newJourney, treeData, saveTriggered, isDataReady]);
+
+    useEffect(() => {
+        if (!isDirty && navigateNewJourney) {
+            navigate(navigateNewJourney, { replace: false });
+            setExecutionCount(0);
+            setnavigateNewJourney(null);
+        }
+    }, [isDirty, navigateNewJourney]);
 
     return (
         <TreeContainer>{treeData.map((node) => getNode(node))}</TreeContainer>

@@ -21,7 +21,7 @@ const PlantConfig = (): JSX.Element => {
             <Helmet titleTemplate={'ProCoSys - Library %s'} />
             <Container>
                 <Routes>
-                    <Route path={libraryType} element={<Library />} />
+                    <Route path={`${libraryType}/*`} element={<Library />} />
                     <Route
                         path="/"
                         element={<Library />} // TODO: WILL LATER BE ROUTED TO MAIN

@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 export const TreeContainer = styled.div`
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 `;
 
 interface NodeContainerProps {
@@ -16,6 +17,8 @@ export const NodeContainer = styled.div<NodeContainerProps>`
     align-items: center;
     margin-bottom: var(--grid-unit);
 
+    margin-left: ${(props): string =>
+        `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
     margin-left: ${(props): string =>
         `calc(var(--grid-unit) * ${props.indentMultiplier} - 4px)`};
 `;
@@ -80,13 +83,6 @@ export const NodeName = styled.div<NodeNameProps>`
         props.isVoided &&
         css`
             opacity: 0.5;
-        `}
-
-    ${(props): any =>
-        props.isSelected &&
-        css`
-            color: ${tokens.colors.interactive.primary__resting.rgba};
-            background: ${tokens.colors.ui.background__light.rgba};
         `}
 
     /* add margin to nodes without children, to align with those that do (with expand/collapse icon) */

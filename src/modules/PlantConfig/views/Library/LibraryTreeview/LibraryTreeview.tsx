@@ -4,13 +4,14 @@ import TreeView, {
 
 import { Container } from './LibraryTreeview.style';
 import { LibraryType } from '../Library';
-import React from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { showSnackbarNotification } from '../../../../../core/services/NotificationService';
 import { usePlantConfigContext } from '../../../context/PlantConfigContext';
 import {
     unsavedChangesConfirmationMessage,
     useDirtyContext,
 } from '@procosys/core/DirtyContext';
+import { Journey } from '../PreservationJourney/types/Journey';
 
 type LibraryTreeviewProps = {
     forceUpdate: React.DispatchWithoutAction;
@@ -23,6 +24,7 @@ type LibraryTreeviewProps = {
 
 const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const { isDirty } = useDirtyContext();
+
     const { libraryApiClient, preservationApiClient } = usePlantConfigContext();
 
     const handleTreeviewClick = (
@@ -68,13 +70,28 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
     const getPresJourneyTreeNodes = async (): Promise<TreeViewNode[]> => {
         const children: TreeViewNode[] = [];
         try {
-            return await preservationApiClient
-                .getJourneys(true)
-                .then((response) => {
-                    if (response) {
-                        response.forEach((journey) =>
-                            children.push({
-                                id: 'journey_' + journey.id,
+            const journeys = await preservationApiClient.getJourneys(true);
+            const groupedJourneys = journeys.reduce(
+                (acc: { [key: string]: Journey[] }, journey) => {
+                    const projectDescription = journey?.project
+                        ? `${journey.project.name} ${journey.project.description}`
+                        : 'Journey available across projects';
+                    if (!acc[projectDescription]) {
+                        acc[projectDescription] = [];
+                    }
+                    acc[projectDescription].push(journey);
+                    return acc;
+                },
+                {} as { [key: string]: Journey[] }
+            );
+            Object.keys(groupedJourneys).forEach((projectDescription) => {
+                const projectNode: TreeViewNode = {
+                    id: `project_${projectDescription}`,
+                    name: projectDescription,
+                    getChildren: async (): Promise<TreeViewNode[]> => {
+                        return groupedJourneys[projectDescription].map(
+                            (journey) => ({
+                                id: `journey_${journey.id}`,
                                 name: journey.title,
                                 isVoided: journey.isVoided,
                                 onClick: (): void =>
@@ -84,9 +101,11 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
                                     ),
                             })
                         );
-                    }
-                    return children;
-                });
+                    },
+                };
+                children.push(projectNode);
+            });
+            return children;
         } catch (error) {
             console.error(
                 'Get preservation journeys failed: ',
@@ -282,3 +301,50 @@ const LibraryTreeview = (props: LibraryTreeviewProps): JSX.Element => {
 };
 
 export default LibraryTreeview;
+
+interface LibraryContextType {
+    newJourney: Journey;
+    setNewJourney: (journey: Journey) => void;
+    saveTriggered: boolean;
+    setSaveTriggered: (value: boolean) => void;
+}
+
+const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
+
+export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
+    const [newJourney, setNewJourney] = useState<Journey>({
+        id: -1,
+        title: '',
+        isVoided: false,
+        isInUse: false,
+        steps: [],
+        rowVersion: '',
+    });
+
+    const [saveTriggered, setSaveTriggered] = useState(false);
+
+    return (
+        <LibraryContext.Provider
+            value={{
+                newJourney,
+                setNewJourney,
+                saveTriggered,
+                setSaveTriggered,
+            }}
+        >
+            {children}
+        </LibraryContext.Provider>
+    );
+};
+
+export const useLibraryContext = (): LibraryContextType => {
+    const context = useContext(LibraryContext);
+    if (!context) {
+        throw new Error(
+            'useLibraryContext must be used within a LibraryProvider'
+        );
+    }
+    return context;
+};

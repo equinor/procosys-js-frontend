@@ -155,7 +155,6 @@ const Header: React.FC = (): JSX.Element => {
         const currentPath = location.pathname.split('/');
 
         if (currentPath.includes('libraryv2')) {
-            console.log('Detected libraryv2, resetting path...');
             navigate(`/${newPlantId}/libraryv2/`);
         } else {
             currentPath[1] = newPlantId;

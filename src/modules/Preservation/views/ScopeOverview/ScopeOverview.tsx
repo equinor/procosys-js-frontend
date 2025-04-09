@@ -971,7 +971,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
             }
         }
         // clear parameters in browser url
-        navigate('/');
     }, [location]);
 
     const navigateToOldPreservation = (): void => {

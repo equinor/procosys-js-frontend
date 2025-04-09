@@ -171,6 +171,7 @@ const ScopeFilter = ({
         project,
         apiClient,
         purchaseOrderNumber: purchaseOrderNumber,
+        setCurrentPurchaseOrderNumber
     } = usePreservationContext();
 
     const [searchIsExpanded, setSearchIsExpanded] = useState<boolean>(false);
@@ -352,6 +353,8 @@ const ScopeFilter = ({
 
     const resetFilter = (): void => {
         const newTagListFilter = clearTagListFilter;
+        setCurrentPurchaseOrderNumber('')
+        console.log("resetting po number")
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };

@@ -354,7 +354,6 @@ const ScopeFilter = ({
     const resetFilter = (): void => {
         const newTagListFilter = clearTagListFilter;
         setCurrentPurchaseOrderNumber('')
-        console.log("resetting po number")
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
     };

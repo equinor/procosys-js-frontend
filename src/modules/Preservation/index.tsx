@@ -17,7 +17,7 @@ const Preservation = (): JSX.Element => {
                 <ClosedProjectWarning />
                 <Routes>
                     <Route
-                        path="AddScope/:method/:duplicateTagId?"
+                        path="AddScope/:method/:duplicateTagId"
                         element={
                             <>
                                 <Helmet>

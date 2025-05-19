@@ -382,7 +382,10 @@ const CreateDummyTag = (props: CreateDummyTagProps): JSX.Element => {
         props.setSelectedTags([tag]);
 
         if (props.duplicateTagId) {
-            props.submit && props.submit();
+            props.submit &&
+                props.submit().then(() => {
+                    unsetDirtyStateFor(moduleName);
+                });
         } else {
             props.nextStep && props.nextStep();
         }

@@ -288,7 +288,7 @@ const AddScope = (): JSX.Element => {
                     'Tag is successfully added to scope',
                     5000
                 );
-                navigate('/');
+                navigate(-1);
             } else {
                 if (stepId && requirements) {
                     switch (addScopeMethod) {

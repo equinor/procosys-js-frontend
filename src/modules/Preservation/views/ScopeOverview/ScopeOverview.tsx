@@ -1089,7 +1089,7 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                                                       (selectedTags.length == 1
                                                           ? selectedTags[0].id.toString()
                                                           : '')
-                                                    : '/'
+                                                    : ''
                                             }
                                         >
                                             <DropdownItem

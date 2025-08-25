@@ -87,6 +87,7 @@ export interface TableProperties<T extends Record<string, unknown>>
     toolbar?: React.ComponentType<any>;
     disableSelectAll?: boolean;
     disablePagination?: boolean;
+    onRowClick?: (row: T) => void;
 }
 
 const selectionHook = (hooks: Hooks<Record<string, unknown>>): void => {
@@ -295,31 +296,6 @@ const ProcosysTable = forwardRef(
             setCounter(counter + 1);
         }, [pageSize]);
 
-        const cellClickHandler =
-            (cell: Cell<Record<string, unknown>>) =>
-            (event: React.MouseEvent): void => {
-                event.stopPropagation();
-
-                const id = cell.row.original?.id as string | undefined;
-                const currentPath = location.pathname;
-                const isInvitationForPunchOut = currentPath.includes(
-                    'InvitationForPunchOut'
-                );
-
-                if (!id) return;
-
-                const isAnchorTag =
-                    (event.target as HTMLElement)?.tagName?.toLowerCase() ===
-                    'a';
-                if (isAnchorTag && cell.column.id && isInvitationForPunchOut) {
-                    navigate(`${id}`, { replace: true });
-                    return;
-                }
-                if (isInvitationForPunchOut) {
-                    navigate(`${id}`);
-                }
-            };
-
         const RenderRow = ({
             index,
             style,
@@ -364,13 +340,16 @@ const ProcosysTable = forwardRef(
                     ref={rowRef}
                     selected={!row.original.noCheckbox && row.isSelected}
                     {...row.getRowProps({ style })}
+                    onClick={() => {
+                        props.onRowClick?.(row.original);
+                    }}
+                    clickable={props.onRowClick !== undefined}
                 >
                     {row.cells.map((cell) => (
                         <TableCell
                             align={cell.column.align}
                             {...cell.getCellProps()}
                             key={cell.getCellProps().key}
-                            onClick={cellClickHandler(cell)}
                         >
                             {cell.render('Cell')}
                         </TableCell>

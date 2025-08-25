@@ -24,7 +24,6 @@ export interface AttachmentListProps {
     disabled: boolean;
     addAttachments?: (files: FileList) => void;
     deleteAttachment?: (row: TableOptions<Attachment>) => void;
-    downloadAttachment: (attachment: Attachment) => Promise<void> | void;
     large?: boolean;
     detailed?: boolean;
 }
@@ -42,24 +41,36 @@ const AttachmentList = ({
     disabled,
     addAttachments,
     deleteAttachment,
-    downloadAttachment,
     large = false,
     detailed = false,
 }: AttachmentListProps): JSX.Element => {
     const iconSize = large ? 24 : 16;
     const iconColumnSize = detailed ? 24 : 8;
 
+    const getAttachmentDownloadLink = (
+        attachment: Attachment
+    ): string | undefined => {
+        if (attachment.downloadUri) {
+            return attachment.downloadUri;
+        }
+        if (
+            attachment.file !== undefined &&
+            typeof window.URL.createObjectURL !== 'undefined'
+        ) {
+            return window.URL.createObjectURL(attachment.file);
+        }
+
+        return undefined;
+    };
+
     const getFilenameColumn = (row: TableOptions<Attachment>): JSX.Element => {
         const attachment = row.value as Attachment;
+        const downloadUrl = getAttachmentDownloadLink(attachment);
         return (
             <AttachmentLink>
-                <div
-                    onClick={(): void => {
-                        downloadAttachment(attachment);
-                    }}
-                >
+                <a href={downloadUrl} download={attachment.fileName}>
                     {attachment.fileName}
-                </div>
+                </a>
             </AttachmentLink>
         );
     };
@@ -293,7 +304,9 @@ const AttachmentList = ({
                     clientSorting={true}
                     rowSelect={false}
                     maxRowCount={large ? attachments.length : undefined}
-                    pageCount={large ? Math.ceil(attachments.length / 25) : undefined}
+                    pageCount={
+                        large ? Math.ceil(attachments.length / 25) : undefined
+                    }
                     toolbar={determineToolbarButtonRender()}
                 />
             </TableContainer>

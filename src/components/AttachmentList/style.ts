@@ -19,9 +19,16 @@ export const AttachmentLink = styled.div`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    text-decoration: underline;
     cursor: pointer;
     color: ${tokens.colors.interactive.primary__resting.rgba};
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 `;
 
 export const StyledButton = styled(Button)`

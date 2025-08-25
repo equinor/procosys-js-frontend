@@ -55,7 +55,7 @@ export const TableHeadFilterCell = styled.div`
     line-height: 1.5rem;
 `;
 
-export const TableRow = styled.div<{ selected: boolean }>`
+export const TableRow = styled.div<{ selected: boolean; clickable: boolean }>`
     color: inherit;
     outline: 0;
     vertical-align: middle;
@@ -63,6 +63,7 @@ export const TableRow = styled.div<{ selected: boolean }>`
     flex: 0 0 auto;
     justify-content: flex-start;
     width: 100%;
+    cursor: ${(props): string => (props.clickable ? 'pointer' : 'default')};
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.07);

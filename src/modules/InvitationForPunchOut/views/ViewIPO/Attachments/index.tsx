@@ -108,12 +108,6 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
         }
     };
 
-    const openAttachment = (attachment: Attachment): void => {
-        if (attachment.downloadUri) {
-            window.open(attachment.downloadUri, '_blank');
-        }
-    };
-
     return (
         <Container>
             {loading && (
@@ -126,7 +120,6 @@ const Attachments = ({ ipoId }: AttachmentsProps): JSX.Element => {
                 disabled={false}
                 addAttachments={handleSubmitFiles}
                 deleteAttachment={removeAttachment}
-                downloadAttachment={openAttachment}
                 large={true}
                 detailed={true}
             />

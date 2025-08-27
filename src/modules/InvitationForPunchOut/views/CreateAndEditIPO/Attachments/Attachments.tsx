@@ -58,11 +58,6 @@ const Attachments = ({
         setDirtyStateFor(ComponentName.Attachments);
     };
 
-    const downloadAttachment = (attachment: Attachment): void => {
-        const link = getAttachmentDownloadLink(attachment);
-        window.open(link, '_blank');
-    };
-
     return (
         <Container>
             <FormContainer>
@@ -73,7 +68,6 @@ const Attachments = ({
                     disabled={false}
                     addAttachments={addAttachments}
                     deleteAttachment={removeAttachment}
-                    downloadAttachment={downloadAttachment}
                     large={true}
                 />
             </FormContainer>

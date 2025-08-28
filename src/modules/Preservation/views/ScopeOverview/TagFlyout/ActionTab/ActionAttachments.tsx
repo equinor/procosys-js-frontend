@@ -25,17 +25,53 @@ const ActionAttachments = ({
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const getAttachments = (): Canceler | null => {
-        let requestCancellor: Canceler | null = null;
-        (async (): Promise<void> => {
-            try {
-                setIsLoading(true);
-                const attachments = await apiClient.getActionAttachments(
+    const addDownloadUriToAttachment = async (
+        attachment: Attachment
+    ): Promise<Attachment> => {
+        if (!attachment.id) return attachment;
+
+        try {
+            attachment.downloadUri =
+                await apiClient.getDownloadUrlForActionAttachment(
                     tagId,
                     actionId,
-                    (cancel: Canceler) => (requestCancellor = cancel)
+                    attachment.id
                 );
-                setAttachments(attachments);
+            return attachment;
+        } catch (error) {
+            console.error(
+                'Unable to get download URL for attachment:',
+                error.message,
+                error.data
+            );
+            return attachment;
+        }
+    };
+
+    const getAttachments = (): Canceler | null => {
+        let requestCancellor: Canceler | null = null;
+
+        (async (): Promise<void> => {
+            try {
+                if (tagId != null) {
+                    setIsLoading(true);
+
+                    const attachments = await apiClient.getActionAttachments(
+                        tagId,
+                        actionId,
+                        (cancel: Canceler) => (requestCancellor = cancel)
+                    );
+
+                    const attachmentsWithUrls: Attachment[] = [];
+
+                    for (const attachment of attachments) {
+                        const attachmentWithUri =
+                            await addDownloadUriToAttachment(attachment);
+                        attachmentsWithUrls.push(attachmentWithUri);
+                    }
+
+                    setAttachments(attachmentsWithUrls);
+                }
             } catch (error) {
                 console.error(
                     'Get attachments failed: ',
@@ -180,7 +216,6 @@ const ActionAttachments = ({
                 disabled={isVoided}
                 addAttachments={enableActions ? addAttachments : undefined}
                 deleteAttachment={enableActions ? deleteAttachment : undefined}
-                downloadAttachment={downloadAttachment}
             />
         </Container>
     );

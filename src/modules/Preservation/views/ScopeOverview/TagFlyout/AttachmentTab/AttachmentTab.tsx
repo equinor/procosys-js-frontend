@@ -21,6 +21,27 @@ const AttachmentTab = ({
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const addDownloadUriToAttachment = async (
+        attachment: Attachment
+    ): Promise<Attachment> => {
+        if (!attachment.id) return attachment;
+
+        try {
+            const uri = await apiClient.getDownloadUrlForTagAttachment(
+                tagId,
+                attachment.id
+            );
+            return { ...attachment, downloadUri: uri };
+        } catch (error) {
+            console.error(
+                'Unable to get download URL for attachment:',
+                error.message,
+                error.data
+            );
+            return attachment;
+        }
+    };
+
     const getAttachments = (): Canceler | null => {
         let requestCancellor: Canceler | null = null;
         (async (): Promise<void> => {
@@ -31,7 +52,16 @@ const AttachmentTab = ({
                         tagId,
                         (cancel: Canceler) => (requestCancellor = cancel)
                     );
-                    setAttachments(attachments);
+
+                    const attachmentsWithUrls: Attachment[] = [];
+
+                    for (const attachment of attachments) {
+                        const attachmentWithUri =
+                            await addDownloadUriToAttachment(attachment);
+                        attachmentsWithUrls.push(attachmentWithUri);
+                    }
+
+                    setAttachments(attachmentsWithUrls);
                 }
             } catch (error) {
                 console.error(
@@ -89,32 +119,6 @@ const AttachmentTab = ({
         setIsLoading(false);
     };
 
-    const downloadAttachment = async (
-        attachment: Attachment
-    ): Promise<void> => {
-        try {
-            if (tagId != null && attachment.id) {
-                const url = await apiClient.getDownloadUrlForTagAttachment(
-                    tagId,
-                    attachment.id
-                );
-                window.open(url, '_blank');
-                showSnackbarNotification(
-                    'Attachment is downloaded.',
-                    5000,
-                    true
-                );
-            }
-        } catch (error) {
-            console.error(
-                'Not able to get download url for tag attachment: ',
-                error.message,
-                error.data
-            );
-            showSnackbarNotification(error.message, 5000, true);
-        }
-    };
-
     const deleteAttachment = async (
         row: TableOptions<Attachment>
     ): Promise<void> => {
@@ -160,7 +164,6 @@ const AttachmentTab = ({
                 disabled={isVoided}
                 addAttachments={addAttachments}
                 deleteAttachment={deleteAttachment}
-                downloadAttachment={downloadAttachment}
             />
         </Container>
     );

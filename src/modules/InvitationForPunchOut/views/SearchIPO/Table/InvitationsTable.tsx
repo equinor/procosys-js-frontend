@@ -7,6 +7,7 @@ import { Query, TableOptions, UseTableRowProps } from 'react-table';
 import ProcosysTable, { TableSorting } from '@procosys/components/Table';
 import { Tooltip } from '@mui/material';
 import { IpoStatusEnum } from '../../enums';
+import { useNavigate } from 'react-router-dom';
 
 interface InvitationsTableProps {
     getIPOs: (
@@ -56,6 +57,7 @@ const InvitationsTable = ({
     const [maxRows, setMaxRows] = useState<number>(0);
     const [data, setData] = useState<IPO[]>([]);
     const [pageCount, setPageCount] = useState<number>(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const req = {
@@ -507,6 +509,9 @@ const InvitationsTable = ({
                 loading={loading}
                 rowSelect={false}
                 pageCount={pageCount}
+                onRowClick={(row: IPO) => {
+                    navigate(`${row.id}`);
+                }}
             />
         </Container>
     );

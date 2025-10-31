@@ -389,7 +389,7 @@ const Header: React.FC = (): JSX.Element => {
                             <a
                                 href={`/${params.plant}/Search?searchType=Check%20Lists`}
                             >
-                                <DropdownItem>Checklist</DropdownItem>
+                                <DropdownItem>Check lists</DropdownItem>
                             </a>
                             <a
                                 href={`/${params.plant}/Search?searchType=Commissioning%20Packages`}

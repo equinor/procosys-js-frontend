@@ -81,7 +81,7 @@
     "@adobe/css-tools": "4.3.2",
     "@azure/msal-browser": "^3.7.0",
     "@babel/traverse": "^7.23.4",
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.11.0",
     "@equinor/eds-core-react": "0.35.1",
     "@equinor/eds-icons": "^0.20.0",

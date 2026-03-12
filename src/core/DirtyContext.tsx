@@ -1,7 +1,6 @@
-import { useLocation, UNSAFE_NavigationContext } from 'react-router-dom';
-import React, { useEffect, useMemo, useState, useContext } from 'react';
+import { useLocation, useBlocker } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
 import propTypes from 'prop-types';
-import { History } from 'history';
 
 export interface IDirtyContext {
     isDirty: boolean;
@@ -22,11 +21,6 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
     const isDirty = useMemo<boolean>(() => {
         return dirtyList.size > 0;
     }, [dirtyList]);
-
-    const unblockRef = React.useRef<any>();
-
-    const { navigator } = useContext(UNSAFE_NavigationContext);
-    const history = navigator as History;
 
     function setDirtyStateFor(componentName: string): void {
         setDirtyList((oldDirtyList) => {
@@ -71,27 +65,32 @@ export const DirtyContextProvider: React.FC = ({ children }): JSX.Element => {
         e.returnValue = unsavedChangesConfirmationMessage;
     }
 
+    /** Handle dirty state when trying to navigate within the application */
+    const blocker = useBlocker(isDirty);
+
+    useEffect(() => {
+        if (blocker.state === 'blocked') {
+            if (window.confirm(unsavedChangesConfirmationMessage)) {
+                blocker.proceed();
+            } else {
+                blocker.reset();
+            }
+        }
+    }, [blocker]);
+
     /** Handle dirty state when trying to navigate outside the application */
     useEffect(() => {
         if (isDirty) {
             window.addEventListener('beforeunload', handleBeforeUnloadEvent);
-
-            unblockRef.current = history.block((tx) => {
-                if (window.confirm(unsavedChangesConfirmationMessage)) {
-                    unblockRef.current();
-                    tx.retry();
-                }
-            });
 
             return (): void => {
                 window.removeEventListener(
                     'beforeunload',
                     handleBeforeUnloadEvent
                 );
-                if (unblockRef.current) unblockRef.current();
             };
         }
-    }, [isDirty, history]);
+    }, [isDirty]);
 
     return (
         <DirtyContext.Provider

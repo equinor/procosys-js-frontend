@@ -965,8 +965,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     toggleFilter();
                 }
 
-                // Clear query string after applying filters so that
-                // "reset filter" does not re-apply stale URL params
                 navigate(location.pathname, { replace: true });
             } else {
                 showSnackbarNotification(

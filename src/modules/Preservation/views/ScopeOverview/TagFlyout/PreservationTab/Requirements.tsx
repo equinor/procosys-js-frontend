@@ -295,6 +295,7 @@ const Requirements = ({
                         requirementId={requirementId}
                         field={field}
                         tagId={tagId}
+                        readonly={readonly}
                         onAttachmentUpdated={refreshRequirements}
                     />
                 );

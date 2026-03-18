@@ -1,5 +1,6 @@
 import { Button, TextField, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { SavedTagListFilter, TagListFilter } from '../types';
 import {
     Collapse,
@@ -351,11 +352,15 @@ const ScopeFilter = ({
         setTagListFilter(localTagListFilter);
     };
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const resetFilter = (): void => {
         const newTagListFilter = clearTagListFilter;
         setCurrentPurchaseOrderNumber('')
         setLocalTagListFilter(newTagListFilter);
         setTagListFilter(newTagListFilter);
+        navigate(location.pathname, { replace: true });
     };
 
     useEffect(() => {

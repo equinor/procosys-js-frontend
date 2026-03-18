@@ -12,7 +12,7 @@ import {
     StyledButton,
     TooltipText,
 } from './ScopeOverview.style';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
     PreservedTag,
     PreservedTags,
@@ -151,7 +151,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
     const [showEditRequirementsDialog, setShowEditRequirementsDialog] =
         useState<boolean>(false);
 
-    const navigate = useNavigate();
     const location = useLocation();
     const analytics = useAnalytics();
     const { plant, permissions } = useCurrentPlant();
@@ -964,8 +963,6 @@ const ScopeOverview: React.FC = (): JSX.Element => {
                     setTagListFilter(tagFilter);
                     toggleFilter();
                 }
-
-                navigate(location.pathname, { replace: true });
             } else {
                 showSnackbarNotification(
                     `The requested project ${projectName} is not available`

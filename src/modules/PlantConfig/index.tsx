@@ -9,7 +9,8 @@ import withAccessControl from '../../core/security/withAccessControl';
 
 const PlantConfig = (): JSX.Element => {
     const { pathname } = useLocation();
-    const pathSegments = pathname.split('/');
+    const decodedPathname = decodeURIComponent(pathname);
+    const pathSegments = decodedPathname.split('/');
     const libraryIndex = pathSegments.indexOf('libraryv2');
     const libraryType =
         libraryIndex !== -1

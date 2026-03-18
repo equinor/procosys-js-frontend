@@ -110,7 +110,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
 
         if (plantsFiltered.length <= 0) {
             console.error(
-                `PlantID: ${plantId} does not exist. Available plants:`,
+                'PlantID does not exist. Available plants:',
                 user.plants
             );
             // TODO:
@@ -119,7 +119,7 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
             // errors occurring only in production. The console logs will be removed once enough
             // information has been gathered.
             throw new InvalidParameterException(
-                `Available plants: ${user.plants}, PlantID: ${plantId} does not exist. , plantInPath: ${plantInPath}`
+                `PlantID does not exist. plantInPath: ${String(plantInPath)}`
             );
         }
         const plant = plantsFiltered[0] as PlantContextDetails;

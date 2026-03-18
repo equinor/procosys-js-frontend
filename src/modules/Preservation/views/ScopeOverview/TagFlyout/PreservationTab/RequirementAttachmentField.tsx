@@ -25,6 +25,7 @@ interface RequirementAttachmentFieldProps {
     requirementId: number;
     field: TagRequirementField;
     tagId: number;
+    readonly: boolean;
     onAttachmentUpdated: () => void;
 }
 
@@ -32,6 +33,7 @@ const RequirementAttachmentField = ({
     requirementId,
     field,
     tagId,
+    readonly,
     onAttachmentUpdated,
 }: RequirementAttachmentFieldProps): JSX.Element => {
     const { apiClient } = usePreservationContext();
@@ -144,28 +146,32 @@ const RequirementAttachmentField = ({
                     <AttachmentLink onClick={downloadAttachment}>
                         {filename}
                     </AttachmentLink>
-                    <Button variant="ghost" onClick={deleteAttachment}>
-                        {deleteIcon}
-                    </Button>
+                    {!readonly && (
+                        <Button variant="ghost" onClick={deleteAttachment}>
+                            {deleteIcon}
+                        </Button>
+                    )}
                 </div>
             )}
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <div style={{ marginTop: 'var(--grid-unit)' }}>
-                    <form>
-                        <SelectFileButton onClick={handleAddFile}>
-                            Select file
-                        </SelectFileButton>
-                        <input
-                            id="uploadFile"
-                            style={{ display: 'none' }}
-                            type="file"
-                            ref={inputFileRef}
-                            onChange={handleSubmitFile}
-                        />
-                    </form>
+            {!readonly && (
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div style={{ marginTop: 'var(--grid-unit)' }}>
+                        <form>
+                            <SelectFileButton onClick={handleAddFile}>
+                                Select file
+                            </SelectFileButton>
+                            <input
+                                id="uploadFile"
+                                style={{ display: 'none' }}
+                                type="file"
+                                ref={inputFileRef}
+                                onChange={handleSubmitFile}
+                            />
+                        </form>
+                    </div>
+                    <SelectFileLabel>{field.label}</SelectFileLabel>
                 </div>
-                <SelectFileLabel>{field.label}</SelectFileLabel>
-            </div>
+            )}
         </div>
     );
 };

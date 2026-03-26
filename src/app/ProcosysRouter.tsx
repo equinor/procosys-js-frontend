@@ -14,77 +14,41 @@ import QuickSearch from '@procosys/modules/QuickSearch';
 const UserGreeting = React.lazy(() => import('./../modules/UserGreeting'));
 const Preservation = React.lazy(() => import('./../modules/Preservation'));
 const PlantConfig = React.lazy(() => import('./../modules/PlantConfig'));
-const InvitationForPunchOut = React.lazy(
-    () => import('../modules/InvitationForPunchOut/InvitationForPunchOut')
-);
+const InvitationForPunchOut = React.lazy(() => import('../modules/InvitationForPunchOut/InvitationForPunchOut'));
 
 const Page404 = (): JSX.Element => {
-    return <h3>404 - 2</h3>;
+  return <h3>404 - 2</h3>;
 };
 
 const ProcosysRouter = (): JSX.Element => {
-    const { plant } = useParams() as any;
+  const { plant } = useParams() as any;
 
-    return (
-        <AnalyticsContextProvider>
-            <PlantContextProvider>
-                <DirtyContextProvider>
-                    <ProCoSysRootLayout>
-                        <QuickSearchContextProvider>
-                            <Header />
-                            <div id="root-content">
-                                <Routes key={plant}>
-                                    <Route
-                                        path={'/'}
-                                        element={
-                                            <ErrorBoundary>
-                                                {LazyRoute(UserGreeting)}
-                                            </ErrorBoundary>
-                                        }
-                                    />
-                                    <Route
-                                        path="preservation/*"
-                                        element={
-                                            <ErrorBoundary>
-                                                {LazyRoute(Preservation)}
-                                            </ErrorBoundary>
-                                        }
-                                    />
-                                    <Route
-                                        path="libraryv2/*"
-                                        element={
-                                            <ErrorBoundary>
-                                                {LazyRoute(PlantConfig)}
-                                            </ErrorBoundary>
-                                        }
-                                    />
-                                    <Route
-                                        path="invitationforpunchout/*"
-                                        element={
-                                            <ErrorBoundary>
-                                                {LazyRoute(
-                                                    InvitationForPunchOut
-                                                )}
-                                            </ErrorBoundary>
-                                        }
-                                    />
-                                    <Route
-                                        path="quicksearch" // not used for the moment
-                                        element={
-                                            <ErrorBoundary>
-                                                {LazyRoute(QuickSearch)}
-                                            </ErrorBoundary>
-                                        }
-                                    />
-                                    <Route path="*" element={<Page404 />} />
-                                </Routes>
-                            </div>
-                        </QuickSearchContextProvider>
-                    </ProCoSysRootLayout>
-                </DirtyContextProvider>
-            </PlantContextProvider>
-        </AnalyticsContextProvider>
-    );
+  return (
+    <AnalyticsContextProvider>
+      <PlantContextProvider>
+        <DirtyContextProvider>
+          <ProCoSysRootLayout>
+            <QuickSearchContextProvider>
+              <Header />
+              <div id="root-content">
+                <Routes key={plant}>
+                  <Route path={'/'} element={<ErrorBoundary>{LazyRoute(UserGreeting)}</ErrorBoundary>} />
+                  <Route path="preservation/*" element={<ErrorBoundary>{LazyRoute(Preservation)}</ErrorBoundary>} />
+                  <Route path="libraryv2/*" element={<ErrorBoundary>{LazyRoute(PlantConfig)}</ErrorBoundary>} />
+                  <Route path="invitationforpunchout/*" element={<ErrorBoundary>{LazyRoute(InvitationForPunchOut)}</ErrorBoundary>} />
+                  <Route
+                    path="quicksearch" // not used for the moment
+                    element={<ErrorBoundary>{LazyRoute(QuickSearch)}</ErrorBoundary>}
+                  />
+                  <Route path="*" element={<Page404 />} />
+                </Routes>
+              </div>
+            </QuickSearchContextProvider>
+          </ProCoSysRootLayout>
+        </DirtyContextProvider>
+      </PlantContextProvider>
+    </AnalyticsContextProvider>
+  );
 };
 
 export default ProcosysRouter;

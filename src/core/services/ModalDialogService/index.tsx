@@ -1,14 +1,6 @@
 import React, { ReactNode } from 'react';
 import { render } from 'react-dom';
-import {
-    Scrim,
-    DialogContainer,
-    Title,
-    Divider,
-    Content,
-    ButtonContainer,
-    ButtonSpacer,
-} from './style';
+import { Scrim, DialogContainer, Title, Divider, Content, ButtonContainer, ButtonSpacer } from './style';
 import { Button } from '@equinor/eds-core-react';
 import { Typography } from '@equinor/eds-core-react';
 
@@ -17,66 +9,55 @@ modalDialogContainer.setAttribute('id', 'model-dialog-container');
 document.body.appendChild(modalDialogContainer);
 
 interface ModalDialogProps {
-    title: string | null;
-    content: ReactNode | null;
-    width: string | null;
-    buttonOneText: string;
-    buttonOneCallback: (() => void) | null;
-    buttonTwoText: string | null;
-    buttonTwoCallback: (() => void) | null;
-    buttonOneOutlined?: boolean;
+  title: string | null;
+  content: ReactNode | null;
+  width: string | null;
+  buttonOneText: string;
+  buttonOneCallback: (() => void) | null;
+  buttonTwoText: string | null;
+  buttonTwoCallback: (() => void) | null;
+  buttonOneOutlined?: boolean;
 }
 
 const ModalDialog = (props: ModalDialogProps): JSX.Element => {
-    const buttonOneHandler = (): void => {
-        render(<></>, modalDialogContainer);
-        if (props.buttonOneCallback) {
-            props.buttonOneCallback();
-        }
-    };
+  const buttonOneHandler = (): void => {
+    render(<></>, modalDialogContainer);
+    if (props.buttonOneCallback) {
+      props.buttonOneCallback();
+    }
+  };
 
-    const buttonTwoHandler = (): void => {
-        render(<></>, modalDialogContainer);
-        if (props.buttonTwoCallback) {
-            props.buttonTwoCallback();
-        }
-    };
+  const buttonTwoHandler = (): void => {
+    render(<></>, modalDialogContainer);
+    if (props.buttonTwoCallback) {
+      props.buttonTwoCallback();
+    }
+  };
 
-    const width = props.width ? props.width : '300px'; //default width;
+  const width = props.width ? props.width : '300px'; //default width;
 
-    return (
-        <Scrim>
-            <DialogContainer width={width}>
-                {props.title && (
-                    <Title>
-                        <Typography variant="h6">{props.title}</Typography>
-                    </Title>
-                )}
-                {props.title && <Divider />}
-                {props.content && <Content>{props.content}</Content>}
-                <ButtonContainer>
-                    {props.buttonOneText && (
-                        <Button
-                            variant={
-                                props.buttonOneOutlined
-                                    ? 'outlined'
-                                    : 'contained'
-                            }
-                            onClick={buttonOneHandler}
-                        >
-                            {props.buttonOneText}
-                        </Button>
-                    )}
-                    <ButtonSpacer />
-                    {props.buttonTwoText && (
-                        <Button onClick={buttonTwoHandler}>
-                            {props.buttonTwoText}
-                        </Button>
-                    )}
-                </ButtonContainer>
-            </DialogContainer>
-        </Scrim>
-    );
+  return (
+    <Scrim>
+      <DialogContainer width={width}>
+        {props.title && (
+          <Title>
+            <Typography variant="h6">{props.title}</Typography>
+          </Title>
+        )}
+        {props.title && <Divider />}
+        {props.content && <Content>{props.content}</Content>}
+        <ButtonContainer>
+          {props.buttonOneText && (
+            <Button variant={props.buttonOneOutlined ? 'outlined' : 'contained'} onClick={buttonOneHandler}>
+              {props.buttonOneText}
+            </Button>
+          )}
+          <ButtonSpacer />
+          {props.buttonTwoText && <Button onClick={buttonTwoHandler}>{props.buttonTwoText}</Button>}
+        </ButtonContainer>
+      </DialogContainer>
+    </Scrim>
+  );
 };
 
 /**
@@ -90,26 +71,26 @@ const ModalDialog = (props: ModalDialogProps): JSX.Element => {
  * @param buttonTwoCallback  Callback function that will be called when clicking on the second button. If null, the button will act as a close-button.
  */
 export const showModalDialog = (
-    title: string | null,
-    content: ReactNode | null,
-    width: string | null,
-    buttonOneText: string,
-    buttonOneCallback: (() => void) | null,
-    buttonTwoText: string | null,
-    buttonTwoCallback: (() => void) | null,
-    buttonOneOutlined?: boolean
+  title: string | null,
+  content: ReactNode | null,
+  width: string | null,
+  buttonOneText: string,
+  buttonOneCallback: (() => void) | null,
+  buttonTwoText: string | null,
+  buttonTwoCallback: (() => void) | null,
+  buttonOneOutlined?: boolean
 ): any => {
-    render(
-        <ModalDialog
-            title={title}
-            content={content}
-            width={width}
-            buttonOneText={buttonOneText}
-            buttonOneCallback={buttonOneCallback}
-            buttonTwoText={buttonTwoText}
-            buttonTwoCallback={buttonTwoCallback}
-            buttonOneOutlined={buttonOneOutlined}
-        />,
-        modalDialogContainer
-    );
+  render(
+    <ModalDialog
+      title={title}
+      content={content}
+      width={width}
+      buttonOneText={buttonOneText}
+      buttonOneCallback={buttonOneCallback}
+      buttonTwoText={buttonTwoText}
+      buttonTwoCallback={buttonTwoCallback}
+      buttonOneOutlined={buttonOneOutlined}
+    />,
+    modalDialogContainer
+  );
 };

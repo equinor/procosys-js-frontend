@@ -6,17 +6,17 @@
  */
 
 export const getErrorMessage = (error: any): string => {
-    if (error.data) {
-        switch (error.data.status) {
-            case 401:
-                return 'You are not authorized';
-            case 403:
-                return 'You do not have permission to access this resource.';
-            case 404:
-                return 'The requested resource was not found.';
-            case 500:
-                return 'An unexpected error occurred. Please try again later.';
-        }
+  if (error.data) {
+    switch (error.data.status) {
+      case 401:
+        return 'You are not authorized';
+      case 403:
+        return 'You do not have permission to access this resource.';
+      case 404:
+        return 'The requested resource was not found.';
+      case 500:
+        return 'An unexpected error occurred. Please try again later.';
     }
-    return 'An unexpected error occurred.';
+  }
+  return 'An unexpected error occurred.';
 };

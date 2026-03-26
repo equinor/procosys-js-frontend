@@ -1,24 +1,7 @@
-import {
-    Attachment,
-    CommPkgRow,
-    ExternalEmail,
-    GeneralInfoDetails,
-    McScope,
-    Participant,
-    Person,
-    PersonInRole,
-    RoleParticipant,
-    Step,
-} from '../../types';
+import { Attachment, CommPkgRow, ExternalEmail, GeneralInfoDetails, McScope, Participant, Person, PersonInRole, RoleParticipant, Step } from '../../types';
 import { CenterContainer, Container } from './CreateAndEditIPO.style';
 import { ComponentName, IpoCustomEvents, IpoStatusEnum } from '../enums';
-import {
-    ExternalEmailDto,
-    FunctionalRoleDto,
-    ParticipantDto,
-    PersonDto,
-    PersonInRoleDto,
-} from '../../http/InvitationForPunchOutApiClient';
+import { ExternalEmailDto, FunctionalRoleDto, ParticipantDto, PersonDto, PersonInRoleDto } from '../../http/InvitationForPunchOutApiClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Canceler } from 'axios';
@@ -38,590 +21,493 @@ import { set } from 'date-fns';
 import { handleApiError } from './utils';
 
 const emptyGeneralInfo: GeneralInfoDetails = {
-    projectName: '',
-    poType: null,
-    title: '',
-    description: '',
-    date: new Date(),
-    startTime: new Date(),
-    endTime: new Date(),
-    location: '',
-    isOnline: false,
+  projectName: '',
+  poType: null,
+  title: '',
+  description: '',
+  date: new Date(),
+  startTime: new Date(),
+  endTime: new Date(),
+  location: '',
+  isOnline: false,
 };
 
 const EditIPO = (): JSX.Element => {
-    const initialSteps: Step[] = [
-        { title: 'General info', isCompleted: true },
-        { title: 'Scope', isCompleted: true },
-        { title: 'Participants', isCompleted: true },
-        { title: 'Upload attachments', isCompleted: true },
-        { title: 'Summary & update', isCompleted: true },
-    ];
+  const initialSteps: Step[] = [
+    { title: 'General info', isCompleted: true },
+    { title: 'Scope', isCompleted: true },
+    { title: 'Participants', isCompleted: true },
+    { title: 'Upload attachments', isCompleted: true },
+    { title: 'Summary & update', isCompleted: true },
+  ];
 
-    const ipoId = useParams().ipoId as any;
-    const [attachments, setAttachments] = useState<Attachment[]>([]);
-    const [generalInfo, setGeneralInfo] =
-        useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [initialGeneralInfo, setInitialGeneralInfo] =
-        useState<GeneralInfoDetails>(emptyGeneralInfo);
-    const [confirmationChecked, setConfirmationChecked] =
-        useState<boolean>(true);
-    const [isOnline, setIsOnline] = useState<boolean>(
-        generalInfo.isOnline ? generalInfo.isOnline : false
-    );
-    const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<
-        CommPkgRow[]
-    >([]);
-    const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] =
-        useState<CommPkgRow[]>([]);
-    const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
-        system: null,
-        multipleDisciplines: false,
-        selected: [],
+  const ipoId = useParams().ipoId as any;
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [generalInfo, setGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+  const [initialGeneralInfo, setInitialGeneralInfo] = useState<GeneralInfoDetails>(emptyGeneralInfo);
+  const [confirmationChecked, setConfirmationChecked] = useState<boolean>(true);
+  const [isOnline, setIsOnline] = useState<boolean>(generalInfo.isOnline ? generalInfo.isOnline : false);
+  const [selectedCommPkgScope, setSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+  const [initialSelectedCommPkgScope, setInitialSelectedCommPkgScope] = useState<CommPkgRow[]>([]);
+  const [selectedMcPkgScope, setSelectedMcPkgScope] = useState<McScope>({
+    system: null,
+    multipleDisciplines: false,
+    selected: [],
+  });
+  const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] = useState<McScope>({
+    system: null,
+    multipleDisciplines: false,
+    selected: [],
+  });
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [initialParticipants, setInitialParticipants] = useState<Participant[]>([]);
+
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [invitation, setInvitation] = useState<Invitation>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
+
+  const { apiClient } = useInvitationForPunchOutContext();
+  const { history } = useRouter();
+  const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } = useDirtyContext();
+  const analystics = useAnalytics();
+  const [steps, setSteps] = useState<Step[]>(initialSteps);
+  const navigate = useNavigate();
+
+  /**
+   * Check and set dirty state for all components
+   */
+  useEffect(() => {
+    if (JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)) {
+      setDirtyStateFor(ComponentName.GeneralInfo);
+    } else {
+      unsetDirtyStateFor(ComponentName.GeneralInfo);
+    }
+  }, [generalInfo]);
+
+  useEffect(() => {
+    const newScope = selectedCommPkgScope.map(({ commPkgNo }) => commPkgNo);
+    const initialScope = initialSelectedCommPkgScope.map(({ commPkgNo }) => commPkgNo);
+    if (JSON.stringify(newScope) !== JSON.stringify(initialScope)) {
+      setDirtyStateFor(ComponentName.Scope);
+    } else {
+      unsetDirtyStateFor(ComponentName.Scope);
+    }
+  }, [selectedCommPkgScope]);
+
+  useEffect(() => {
+    const mcPkgs = selectedMcPkgScope.selected.map(({ mcPkgNo }) => mcPkgNo);
+    const initialMcPkgs = initialSelectedMcPkgScope.selected.map(({ mcPkgNo }) => mcPkgNo);
+    if (JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) || selectedMcPkgScope.system !== initialSelectedMcPkgScope.system) {
+      setDirtyStateFor(ComponentName.Scope);
+    } else {
+      unsetDirtyStateFor(ComponentName.Scope);
+    }
+  }, [selectedMcPkgScope]);
+
+  useEffect(() => {
+    if (JSON.stringify(participants) !== JSON.stringify(initialParticipants)) {
+      setDirtyStateFor(ComponentName.Participants);
+    } else {
+      unsetDirtyStateFor(ComponentName.Participants);
+    }
+  }, [participants]);
+
+  /**
+   * Fetch and set available functional roles
+   */
+  const getFunctionalRoles = useCallback(
+    async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+      try {
+        const functionalRoles = await apiClient.getFunctionalRolesAsync(requestCanceller).then((roles) =>
+          roles.map((role): RoleParticipant => {
+            return {
+              code: role.code,
+              description: role.description,
+              usePersonalEmail: role.usePersonalEmail,
+              notify: false,
+              persons: role.persons.map((p) => {
+                return {
+                  azureOid: p.azureOid,
+                  name: `${p.firstName} ${p.lastName}`,
+                  email: p.email,
+                  radioOption: role.usePersonalEmail ? 'to' : null,
+                };
+              }),
+            };
+          })
+        );
+        setAvailableRoles(functionalRoles);
+      } catch (error) {
+        handleApiError(error);
+      }
+    },
+    [ipoId]
+  );
+
+  const getCommPkgScope = (): string[] => {
+    return selectedCommPkgScope.map((c) => {
+      return c.commPkgNo;
     });
-    const [initialSelectedMcPkgScope, setInitialSelectedMcPkgScope] =
-        useState<McScope>({
-            system: null,
-            multipleDisciplines: false,
-            selected: [],
-        });
-    const [participants, setParticipants] = useState<Participant[]>([]);
-    const [initialParticipants, setInitialParticipants] = useState<
-        Participant[]
-    >([]);
+  };
 
-    const [isSaving, setIsSaving] = useState<boolean>(false);
-    const [invitation, setInvitation] = useState<Invitation>();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [availableRoles, setAvailableRoles] = useState<RoleParticipant[]>([]);
+  const getMcScope = (): string[] | null => selectedMcPkgScope.selected.map((mc) => mc.mcPkgNo);
 
-    const { apiClient } = useInvitationForPunchOutContext();
-    const { history } = useRouter();
-    const { setDirtyStateFor, unsetDirtyStateFor, unsetDirtyStateForMany } =
-        useDirtyContext();
-    const analystics = useAnalytics();
-    const [steps, setSteps] = useState<Step[]>(initialSteps);
-    const navigate = useNavigate();
-
-    /**
-     * Check and set dirty state for all components
-     */
-    useEffect(() => {
-        if (
-            JSON.stringify(generalInfo) !== JSON.stringify(initialGeneralInfo)
-        ) {
-            setDirtyStateFor(ComponentName.GeneralInfo);
-        } else {
-            unsetDirtyStateFor(ComponentName.GeneralInfo);
-        }
-    }, [generalInfo]);
-
-    useEffect(() => {
-        const newScope = selectedCommPkgScope.map(({ commPkgNo }) => commPkgNo);
-        const initialScope = initialSelectedCommPkgScope.map(
-            ({ commPkgNo }) => commPkgNo
-        );
-        if (JSON.stringify(newScope) !== JSON.stringify(initialScope)) {
-            setDirtyStateFor(ComponentName.Scope);
-        } else {
-            unsetDirtyStateFor(ComponentName.Scope);
-        }
-    }, [selectedCommPkgScope]);
-
-    useEffect(() => {
-        const mcPkgs = selectedMcPkgScope.selected.map(
-            ({ mcPkgNo }) => mcPkgNo
-        );
-        const initialMcPkgs = initialSelectedMcPkgScope.selected.map(
-            ({ mcPkgNo }) => mcPkgNo
-        );
-        if (
-            JSON.stringify(mcPkgs) !== JSON.stringify(initialMcPkgs) ||
-            selectedMcPkgScope.system !== initialSelectedMcPkgScope.system
-        ) {
-            setDirtyStateFor(ComponentName.Scope);
-        } else {
-            unsetDirtyStateFor(ComponentName.Scope);
-        }
-    }, [selectedMcPkgScope]);
-
-    useEffect(() => {
-        if (
-            JSON.stringify(participants) !== JSON.stringify(initialParticipants)
-        ) {
-            setDirtyStateFor(ComponentName.Participants);
-        } else {
-            unsetDirtyStateFor(ComponentName.Participants);
-        }
-    }, [participants]);
-
-    /**
-     * Fetch and set available functional roles
-     */
-    const getFunctionalRoles = useCallback(
-        async (
-            requestCanceller?: (cancelCallback: Canceler) => void
-        ): Promise<void> => {
-            try {
-                const functionalRoles = await apiClient
-                    .getFunctionalRolesAsync(requestCanceller)
-                    .then((roles) =>
-                        roles.map((role): RoleParticipant => {
-                            return {
-                                code: role.code,
-                                description: role.description,
-                                usePersonalEmail: role.usePersonalEmail,
-                                notify: false,
-                                persons: role.persons.map((p) => {
-                                    return {
-                                        azureOid: p.azureOid,
-                                        name: `${p.firstName} ${p.lastName}`,
-                                        email: p.email,
-                                        radioOption: role.usePersonalEmail
-                                            ? 'to'
-                                            : null,
-                                    };
-                                }),
-                            };
-                        })
-                    );
-                setAvailableRoles(functionalRoles);
-            } catch (error) {
-                handleApiError(error);
-            }
-        },
-        [ipoId]
-    );
-
-    const getCommPkgScope = (): string[] => {
-        return selectedCommPkgScope.map((c) => {
-            return c.commPkgNo;
-        });
+  const getPerson = (participant: Participant): PersonDto | null => {
+    if (!participant.person) {
+      return null;
+    }
+    return {
+      id: participant.id,
+      azureOid: participant.person.azureOid,
+      email: participant.person.email,
+      required: participant.person.radioOption == 'to',
+      rowVersion: participant.rowVersion,
     };
+  };
 
-    const getMcScope = (): string[] | null =>
-        selectedMcPkgScope.selected.map((mc) => mc.mcPkgNo);
+  const getPersons = (role: RoleParticipant): PersonInRoleDto[] | null => {
+    if (!role.persons || role.persons.length == 0) {
+      return null;
+    }
+    return role.persons.map((p) => {
+      return {
+        id: p.id,
+        azureOid: p.azureOid,
+        email: p.email,
+        required: p.radioOption == 'to' || role.usePersonalEmail,
+        rowVersion: p.rowVersion,
+      };
+    });
+  };
 
-    const getPerson = (participant: Participant): PersonDto | null => {
-        if (!participant.person) {
-            return null;
-        }
-        return {
-            id: participant.id,
-            azureOid: participant.person.azureOid,
-            email: participant.person.email,
-            required: participant.person.radioOption == 'to',
-            rowVersion: participant.rowVersion,
-        };
+  const getFunctionalRole = (participant: Participant): FunctionalRoleDto | null => {
+    if (!participant.role) {
+      return null;
+    }
+    return {
+      id: participant.id,
+      code: participant.role.code,
+      persons: getPersons(participant.role),
+      rowVersion: participant.rowVersion,
     };
+  };
 
-    const getPersons = (role: RoleParticipant): PersonInRoleDto[] | null => {
-        if (!role.persons || role.persons.length == 0) {
-            return null;
-        }
-        return role.persons.map((p) => {
-            return {
-                id: p.id,
-                azureOid: p.azureOid,
-                email: p.email,
-                required: p.radioOption == 'to' || role.usePersonalEmail,
-                rowVersion: p.rowVersion,
-            };
-        });
+  const getExternalEmail = (participant: Participant): ExternalEmailDto | null => {
+    if (!participant.externalEmail) return null;
+    return {
+      id: participant.id,
+      email: participant.externalEmail.email,
+      rowVersion: participant.rowVersion,
     };
+  };
 
-    const getFunctionalRole = (
-        participant: Participant
-    ): FunctionalRoleDto | null => {
-        if (!participant.role) {
-            return null;
-        }
-        return {
-            id: participant.id,
-            code: participant.role.code,
-            persons: getPersons(participant.role),
-            rowVersion: participant.rowVersion,
-        };
-    };
+  const getParticipants = (): ParticipantDto[] => {
+    return participants.map((p, i) => {
+      return {
+        organization: p.organization.value,
+        sortKey: i,
+        externalEmail: getExternalEmail(p),
+        person: getPerson(p),
+        functionalRole: getFunctionalRole(p),
+      };
+    });
+  };
 
-    const getExternalEmail = (
-        participant: Participant
-    ): ExternalEmailDto | null => {
-        if (!participant.externalEmail) return null;
-        return {
-            id: participant.id,
-            email: participant.externalEmail.email,
-            rowVersion: participant.rowVersion,
-        };
-    };
-
-    const getParticipants = (): ParticipantDto[] => {
-        return participants.map((p, i) => {
-            return {
-                organization: p.organization.value,
-                sortKey: i,
-                externalEmail: getExternalEmail(p),
-                person: getPerson(p),
-                functionalRole: getFunctionalRole(p),
-            };
-        });
-    };
-
-    const uploadOrRemoveAttachments = async (ipoId: number): Promise<any> => {
-        await Promise.all(
-            attachments.map(async (attachment) => {
-                try {
-                    //Attachments without 'file' is already uploaded
-                    if (attachment.file) {
-                        await apiClient.uploadAttachment(
-                            ipoId,
-                            attachment.file,
-                            true
-                        );
-                    }
-
-                    //Attachments already uploaded can be marked to be deleted
-                    if (
-                        attachment.id &&
-                        attachment.rowVersion &&
-                        attachment.toBeDeleted
-                    ) {
-                        await apiClient.deleteAttachment(
-                            ipoId,
-                            attachment.id,
-                            attachment.rowVersion
-                        );
-                    }
-                } catch (error) {
-                    handleApiError(
-                        error,
-                        'Upload or delete of attachment failed'
-                    );
-                }
-            })
-        );
-    };
-
-    const getAttachments = async (
-        requestCanceller?: (cancelCallback: Canceler) => void
-    ): Promise<void> => {
+  const uploadOrRemoveAttachments = async (ipoId: number): Promise<any> => {
+    await Promise.all(
+      attachments.map(async (attachment) => {
         try {
-            const response = await apiClient.getAttachments(
-                ipoId,
-                requestCanceller
-            );
-            setAttachments(response);
+          //Attachments without 'file' is already uploaded
+          if (attachment.file) {
+            await apiClient.uploadAttachment(ipoId, attachment.file, true);
+          }
+
+          //Attachments already uploaded can be marked to be deleted
+          if (attachment.id && attachment.rowVersion && attachment.toBeDeleted) {
+            await apiClient.deleteAttachment(ipoId, attachment.id, attachment.rowVersion);
+          }
         } catch (error) {
-            handleApiError(error);
+          handleApiError(error, 'Upload or delete of attachment failed');
         }
-    };
-
-    const saveUpdatedIpo = async (): Promise<void> => {
-        setIsSaving(true);
-        if (
-            generalInfo.title &&
-            generalInfo.projectName &&
-            generalInfo.poType &&
-            invitation &&
-            generalInfo.date &&
-            generalInfo.startTime &&
-            generalInfo.endTime
-        ) {
-            try {
-                const commPkgScope = getCommPkgScope();
-                const mcPkgScope = getMcScope();
-                const ipoParticipants = getParticipants();
-                // start and end time fields always use the current date
-                // this adds date set in date field to the start and end time
-                const startTime = set(generalInfo.date, {
-                    hours: generalInfo.startTime.getHours(),
-                    minutes: generalInfo.startTime.getMinutes(),
-                });
-                const endTime = set(generalInfo.date, {
-                    hours: generalInfo.endTime.getHours(),
-                    minutes: generalInfo.endTime.getMinutes(),
-                });
-
-                if (invitation?.status != IpoStatusEnum.PLANNED) {
-                    await apiClient.updateIpoParticipants(
-                        ipoId,
-                        ipoParticipants
-                    );
-                } else {
-                    await apiClient.updateIpo(
-                        ipoId,
-                        generalInfo.title,
-                        generalInfo.poType.value,
-                        startTime,
-                        endTime,
-                        generalInfo.description
-                            ? generalInfo.description
-                            : null,
-                        generalInfo.location ? generalInfo.location : null,
-                        ipoParticipants,
-                        mcPkgScope,
-                        commPkgScope,
-                        invitation.rowVersion
-                    );
-                }
-                analystics.trackUserAction(IpoCustomEvents.EDITED, {
-                    project: generalInfo.projectName,
-                    type: generalInfo.poType.value,
-                });
-
-                await uploadOrRemoveAttachments(ipoId);
-
-                unsetDirtyStateForMany([
-                    ComponentName.GeneralInfo,
-                    ComponentName.Scope,
-                    ComponentName.Participants,
-                    ComponentName.Attachments,
-                ]);
-                navigate(-1);
-            } catch (error) {
-                handleApiError(error, 'Save updated IPO failed: ');
-            }
-        }
-        setIsSaving(false);
-    };
-
-    const getInvitation = useCallback(
-        async (
-            requestCanceller?: (cancelCallback: Canceler) => void
-        ): Promise<void> => {
-            try {
-                const response = await apiClient.getIPO(
-                    ipoId,
-                    requestCanceller
-                );
-                setInvitation(response);
-            } catch (error) {
-                handleApiError(error);
-            }
-        },
-        [ipoId]
+      })
     );
+  };
 
-    /**
-     *  Populate forms based on invitation to edit
-     */
-    useEffect(() => {
-        if (invitation) {
-            //General information
-            const poType = poTypes.find(
-                (p: SelectItem) => p.value === invitation.type
-            );
-            const startTime = new Date(invitation.startTimeUtc);
-            const endTime = new Date(invitation.endTimeUtc);
-            const info = {
-                ...emptyGeneralInfo,
-                projectName: invitation.projectName
-                    ? invitation.projectName
-                    : '',
-                poType: poType ? poType : null,
-                title: invitation.title ? invitation.title : '',
-                description: invitation.description
-                    ? invitation.description
-                    : '',
-                date: startTime,
-                // start and end time fields needs to use current date, not the date set in the date field
-                startTime: set(new Date(), {
-                    hours: startTime.getHours(),
-                    minutes: startTime.getMinutes(),
-                }),
-                endTime: set(new Date(), {
-                    hours: endTime.getHours(),
-                    minutes: endTime.getMinutes(),
-                }),
-                location: invitation.location ? invitation.location : '',
-                isOnline: invitation.isOnline,
-            };
-            setGeneralInfo({ ...info });
-            setInitialGeneralInfo({ ...info });
+  const getAttachments = async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+    try {
+      const response = await apiClient.getAttachments(ipoId, requestCanceller);
+      setAttachments(response);
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
 
-            //CommPkg
-            const commPkgScope: CommPkgRow[] = [];
+  const saveUpdatedIpo = async (): Promise<void> => {
+    setIsSaving(true);
+    if (generalInfo.title && generalInfo.projectName && generalInfo.poType && invitation && generalInfo.date && generalInfo.startTime && generalInfo.endTime) {
+      try {
+        const commPkgScope = getCommPkgScope();
+        const mcPkgScope = getMcScope();
+        const ipoParticipants = getParticipants();
+        // start and end time fields always use the current date
+        // this adds date set in date field to the start and end time
+        const startTime = set(generalInfo.date, {
+          hours: generalInfo.startTime.getHours(),
+          minutes: generalInfo.startTime.getMinutes(),
+        });
+        const endTime = set(generalInfo.date, {
+          hours: generalInfo.endTime.getHours(),
+          minutes: generalInfo.endTime.getMinutes(),
+        });
 
-            if (invitation.commPkgScope && invitation.commPkgScope.length > 0) {
-                invitation.commPkgScope.forEach((commPkg) => {
-                    commPkgScope.push({
-                        commPkgNo: commPkg.commPkgNo,
-                        description: commPkg.description,
-                        system: commPkg.system,
-                        status: commPkg.status,
-                    });
-                });
-                setSelectedCommPkgScope(commPkgScope);
-                setInitialSelectedCommPkgScope(commPkgScope);
-            } else if (
-                invitation.mcPkgScope &&
-                invitation.mcPkgScope.length > 0
-            ) {
-                //MCPkg
-                const mcPkgScope: McScope = {
-                    system: null,
-                    multipleDisciplines: false,
-                    selected: [],
-                };
+        if (invitation?.status != IpoStatusEnum.PLANNED) {
+          await apiClient.updateIpoParticipants(ipoId, ipoParticipants);
+        } else {
+          await apiClient.updateIpo(
+            ipoId,
+            generalInfo.title,
+            generalInfo.poType.value,
+            startTime,
+            endTime,
+            generalInfo.description ? generalInfo.description : null,
+            generalInfo.location ? generalInfo.location : null,
+            ipoParticipants,
+            mcPkgScope,
+            commPkgScope,
+            invitation.rowVersion
+          );
+        }
+        analystics.trackUserAction(IpoCustomEvents.EDITED, {
+          project: generalInfo.projectName,
+          type: generalInfo.poType.value,
+        });
 
-                invitation.mcPkgScope.forEach((mcPkg) => {
-                    if (!mcPkgScope.system) {
-                        mcPkgScope.system = mcPkg.system;
-                    }
-                    mcPkgScope.selected.push({
-                        mcPkgNo: mcPkg.mcPkgNo,
-                        description: mcPkg.description,
-                        system: mcPkg.system,
-                        commPkgNo: mcPkg.commPkgNo,
-                        discipline: '',
-                    });
-                });
-                setSelectedMcPkgScope(mcPkgScope);
-                setInitialSelectedMcPkgScope(mcPkgScope);
-            }
+        await uploadOrRemoveAttachments(ipoId);
 
-            //Participants
-            const participants: Participant[] = [];
-            invitation.participants.forEach((participant) => {
-                let participantType = '';
-                let person: Person | null = null;
-                let roleParticipant: RoleParticipant | null = null;
-                let externalEmail: ExternalEmail | null = null;
+        unsetDirtyStateForMany([ComponentName.GeneralInfo, ComponentName.Scope, ComponentName.Participants, ComponentName.Attachments]);
+        navigate(-1);
+      } catch (error) {
+        handleApiError(error, 'Save updated IPO failed: ');
+      }
+    }
+    setIsSaving(false);
+  };
 
-                if (participant.person) {
-                    participantType = 'Person';
-                    person = {
-                        azureOid: participant.person.azureOid,
-                        name: `${participant.person.firstName} ${participant.person.lastName}`,
-                        email: participant.person.email,
-                        radioOption: null,
-                    };
-                } else if (participant.functionalRole) {
-                    participantType = 'Functional role';
+  const getInvitation = useCallback(
+    async (requestCanceller?: (cancelCallback: Canceler) => void): Promise<void> => {
+      try {
+        const response = await apiClient.getIPO(ipoId, requestCanceller);
+        setInvitation(response);
+      } catch (error) {
+        handleApiError(error);
+      }
+    },
+    [ipoId]
+  );
 
-                    const persons: PersonInRole[] = [];
-                    participant.functionalRole.persons.forEach((person) => {
-                        persons.push({
-                            id: person.id,
-                            azureOid: person.azureOid,
-                            name: `${person.firstName} ${person.lastName}`,
-                            email: person.email,
-                            rowVersion: person.rowVersion,
-                            radioOption: person.required ? 'to' : 'cc',
-                        });
-                    });
+  /**
+   *  Populate forms based on invitation to edit
+   */
+  useEffect(() => {
+    if (invitation) {
+      //General information
+      const poType = poTypes.find((p: SelectItem) => p.value === invitation.type);
+      const startTime = new Date(invitation.startTimeUtc);
+      const endTime = new Date(invitation.endTimeUtc);
+      const info = {
+        ...emptyGeneralInfo,
+        projectName: invitation.projectName ? invitation.projectName : '',
+        poType: poType ? poType : null,
+        title: invitation.title ? invitation.title : '',
+        description: invitation.description ? invitation.description : '',
+        date: startTime,
+        // start and end time fields needs to use current date, not the date set in the date field
+        startTime: set(new Date(), {
+          hours: startTime.getHours(),
+          minutes: startTime.getMinutes(),
+        }),
+        endTime: set(new Date(), {
+          hours: endTime.getHours(),
+          minutes: endTime.getMinutes(),
+        }),
+        location: invitation.location ? invitation.location : '',
+        isOnline: invitation.isOnline,
+      };
+      setGeneralInfo({ ...info });
+      setInitialGeneralInfo({ ...info });
 
-                    const funcRole = availableRoles
-                        ? availableRoles.find(
-                              (role) =>
-                                  role.code === participant.functionalRole.code
-                          )
-                        : null;
-                    roleParticipant = {
-                        code: participant.functionalRole.code,
-                        description: funcRole ? funcRole.description : '',
-                        usePersonalEmail: funcRole
-                            ? funcRole.usePersonalEmail
-                            : false,
-                        notify: persons && persons.length > 0 ? true : false,
-                        persons: persons,
-                    };
-                } else if (participant.externalEmail) {
-                    participantType = 'Person';
-                    externalEmail = {
-                        email: participant.externalEmail.externalEmail,
-                    };
-                }
-                const organizationText = OrganizationMap.get(
-                    participant.organization as Organization
-                );
-                const newParticipant: Participant = {
-                    id: participant.id,
-                    organization: {
-                        text: organizationText ? organizationText : 'Unknown',
-                        value: participant.organization,
-                    },
-                    sortKey: participant.sortKey,
-                    type: participantType,
-                    rowVersion: participant.rowVersion,
-                    externalEmail: externalEmail,
-                    person: person,
-                    role: roleParticipant,
-                    signedAt: participant.signedAtUtc,
-                };
-                participants.push(newParticipant);
+      //CommPkg
+      const commPkgScope: CommPkgRow[] = [];
+
+      if (invitation.commPkgScope && invitation.commPkgScope.length > 0) {
+        invitation.commPkgScope.forEach((commPkg) => {
+          commPkgScope.push({
+            commPkgNo: commPkg.commPkgNo,
+            description: commPkg.description,
+            system: commPkg.system,
+            status: commPkg.status,
+          });
+        });
+        setSelectedCommPkgScope(commPkgScope);
+        setInitialSelectedCommPkgScope(commPkgScope);
+      } else if (invitation.mcPkgScope && invitation.mcPkgScope.length > 0) {
+        //MCPkg
+        const mcPkgScope: McScope = {
+          system: null,
+          multipleDisciplines: false,
+          selected: [],
+        };
+
+        invitation.mcPkgScope.forEach((mcPkg) => {
+          if (!mcPkgScope.system) {
+            mcPkgScope.system = mcPkg.system;
+          }
+          mcPkgScope.selected.push({
+            mcPkgNo: mcPkg.mcPkgNo,
+            description: mcPkg.description,
+            system: mcPkg.system,
+            commPkgNo: mcPkg.commPkgNo,
+            discipline: '',
+          });
+        });
+        setSelectedMcPkgScope(mcPkgScope);
+        setInitialSelectedMcPkgScope(mcPkgScope);
+      }
+
+      //Participants
+      const participants: Participant[] = [];
+      invitation.participants.forEach((participant) => {
+        let participantType = '';
+        let person: Person | null = null;
+        let roleParticipant: RoleParticipant | null = null;
+        let externalEmail: ExternalEmail | null = null;
+
+        if (participant.person) {
+          participantType = 'Person';
+          person = {
+            azureOid: participant.person.azureOid,
+            name: `${participant.person.firstName} ${participant.person.lastName}`,
+            email: participant.person.email,
+            radioOption: null,
+          };
+        } else if (participant.functionalRole) {
+          participantType = 'Functional role';
+
+          const persons: PersonInRole[] = [];
+          participant.functionalRole.persons.forEach((person) => {
+            persons.push({
+              id: person.id,
+              azureOid: person.azureOid,
+              name: `${person.firstName} ${person.lastName}`,
+              email: person.email,
+              rowVersion: person.rowVersion,
+              radioOption: person.required ? 'to' : 'cc',
             });
+          });
 
-            setParticipants(participants);
-            setInitialParticipants(participants);
+          const funcRole = availableRoles ? availableRoles.find((role) => role.code === participant.functionalRole.code) : null;
+          roleParticipant = {
+            code: participant.functionalRole.code,
+            description: funcRole ? funcRole.description : '',
+            usePersonalEmail: funcRole ? funcRole.usePersonalEmail : false,
+            notify: persons && persons.length > 0 ? true : false,
+            persons: persons,
+          };
+        } else if (participant.externalEmail) {
+          participantType = 'Person';
+          externalEmail = {
+            email: participant.externalEmail.externalEmail,
+          };
         }
-    }, [invitation]);
+        const organizationText = OrganizationMap.get(participant.organization as Organization);
+        const newParticipant: Participant = {
+          id: participant.id,
+          organization: {
+            text: organizationText ? organizationText : 'Unknown',
+            value: participant.organization,
+          },
+          sortKey: participant.sortKey,
+          type: participantType,
+          rowVersion: participant.rowVersion,
+          externalEmail: externalEmail,
+          person: person,
+          role: roleParticipant,
+          signedAt: participant.signedAtUtc,
+        };
+        participants.push(newParticipant);
+      });
 
-    /**
-     * For edit, fetch data for existing ipo
-     */
-    useEffect(() => {
-        if (ipoId && availableRoles) {
-            let requestCancellor: Canceler | null = null;
-            (async (): Promise<void> => {
-                setIsLoading(true);
-                await getFunctionalRoles((cancel: Canceler) => {
-                    requestCancellor = cancel;
-                });
-                await getInvitation((cancel: Canceler) => {
-                    requestCancellor = cancel;
-                });
-                await getAttachments((cancel: Canceler) => {
-                    requestCancellor = cancel;
-                });
-                setIsLoading(false);
-            })();
-            return (): void => {
-                requestCancellor && requestCancellor();
-            };
-        }
-    }, [ipoId]);
-
-    if (isSaving) {
-        return (
-            <Container>
-                <Loading title="Save updated IPO" />
-            </Container>
-        );
+      setParticipants(participants);
+      setInitialParticipants(participants);
     }
+  }, [invitation]);
 
-    if (isLoading) {
-        return (
-            <CenterContainer>
-                <Loading title="Fetching IPO" />
-            </CenterContainer>
-        );
+  /**
+   * For edit, fetch data for existing ipo
+   */
+  useEffect(() => {
+    if (ipoId && availableRoles) {
+      let requestCancellor: Canceler | null = null;
+      (async (): Promise<void> => {
+        setIsLoading(true);
+        await getFunctionalRoles((cancel: Canceler) => {
+          requestCancellor = cancel;
+        });
+        await getInvitation((cancel: Canceler) => {
+          requestCancellor = cancel;
+        });
+        await getAttachments((cancel: Canceler) => {
+          requestCancellor = cancel;
+        });
+        setIsLoading(false);
+      })();
+      return (): void => {
+        requestCancellor && requestCancellor();
+      };
     }
+  }, [ipoId]);
 
+  if (isSaving) {
     return (
-        <CreateAndEditIPO
-            saveIpo={saveUpdatedIpo}
-            steps={steps}
-            setSteps={setSteps}
-            generalInfo={generalInfo}
-            setGeneralInfo={setGeneralInfo}
-            selectedCommPkgScope={selectedCommPkgScope}
-            setSelectedCommPkgScope={setSelectedCommPkgScope}
-            selectedMcPkgScope={selectedMcPkgScope}
-            setSelectedMcPkgScope={setSelectedMcPkgScope}
-            participants={participants}
-            setParticipants={setParticipants}
-            attachments={attachments}
-            setAttachments={setAttachments}
-            availableRoles={availableRoles}
-            fromMain={false}
-            confirmationChecked={confirmationChecked}
-            setConfirmationChecked={setConfirmationChecked}
-            isEditMode={true}
-            ipoId={ipoId}
-            status={invitation?.status}
-        />
+      <Container>
+        <Loading title="Save updated IPO" />
+      </Container>
     );
+  }
+
+  if (isLoading) {
+    return (
+      <CenterContainer>
+        <Loading title="Fetching IPO" />
+      </CenterContainer>
+    );
+  }
+
+  return (
+    <CreateAndEditIPO
+      saveIpo={saveUpdatedIpo}
+      steps={steps}
+      setSteps={setSteps}
+      generalInfo={generalInfo}
+      setGeneralInfo={setGeneralInfo}
+      selectedCommPkgScope={selectedCommPkgScope}
+      setSelectedCommPkgScope={setSelectedCommPkgScope}
+      selectedMcPkgScope={selectedMcPkgScope}
+      setSelectedMcPkgScope={setSelectedMcPkgScope}
+      participants={participants}
+      setParticipants={setParticipants}
+      attachments={attachments}
+      setAttachments={setAttachments}
+      availableRoles={availableRoles}
+      fromMain={false}
+      confirmationChecked={confirmationChecked}
+      setConfirmationChecked={setConfirmationChecked}
+      isEditMode={true}
+      ipoId={ipoId}
+      status={invitation?.status}
+    />
+  );
 };
 
 export default EditIPO;

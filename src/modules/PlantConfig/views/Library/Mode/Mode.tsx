@@ -250,11 +250,9 @@ const Mode = (props: ModeProps): JSX.Element => {
         <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
         <IconContainer>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
-                {addIcon} New mode
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
+              {addIcon} New mode
+            </Button>
           </Tooltip>
         </IconContainer>
       </Container>
@@ -280,11 +278,9 @@ const Mode = (props: ModeProps): JSX.Element => {
       <ButtonContainer>
         <ButtonContainerLeft>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
-                {addIcon} New mode
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
+              {addIcon} New mode
+            </Button>
           </Tooltip>
         </ButtonContainerLeft>
         <ButtonContainerRight>
@@ -292,31 +288,25 @@ const Mode = (props: ModeProps): JSX.Element => {
             <>
               <ButtonSpacer />
               <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newMode.isInUse ? 'Mode that is in use cannot be deleted' : ''}>
-                <div>
-                  <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse || !canDelete}>
-                    {deleteIcon} Delete
-                  </Button>
-                </div>
+                <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse || !canDelete}>
+                  {deleteIcon} Delete
+                </Button>
               </Tooltip>
             </>
           )}
           <ButtonSpacer />
           {newMode.isVoided && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={unvoidMode} disabled={!canVoidUnvoid}>
-                  {unvoidIcon} Unvoid
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={unvoidMode} disabled={!canVoidUnvoid}>
+                {unvoidIcon} Unvoid
+              </Button>
             </Tooltip>
           )}
           {!newMode.isVoided && newMode.id != -1 && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={voidMode} disabled={!canVoidUnvoid}>
-                  {voidIcon} Void
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={voidMode} disabled={!canVoidUnvoid}>
+                {voidIcon} Void
+              </Button>
             </Tooltip>
           )}
           <ButtonSpacer />
@@ -325,11 +315,9 @@ const Mode = (props: ModeProps): JSX.Element => {
           </Button>
           <ButtonSpacer />
           <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty || !canWrite}>
-                Save
-              </Button>
-            </div>
+            <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty || !canWrite}>
+              Save
+            </Button>
           </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>

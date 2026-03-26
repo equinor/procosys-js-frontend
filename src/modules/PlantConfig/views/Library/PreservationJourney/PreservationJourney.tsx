@@ -639,11 +639,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
         <Breadcrumbs>{breadcrumbs}</Breadcrumbs>
         <IconContainer>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={initNewJourney} disabled={!canCreate}>
-                {addIcon} New preservation journey
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={initNewJourney} disabled={!canCreate}>
+              {addIcon} New preservation journey
+            </Button>
           </Tooltip>
         </IconContainer>
       </Container>
@@ -670,11 +668,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
       <ButtonContainer>
         <ButtonContainerLeft>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={initNewJourney} disabled={!canCreate}>
-                {addIcon} New preservation journey
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={initNewJourney} disabled={!canCreate}>
+              {addIcon} New preservation journey
+            </Button>
           </Tooltip>
         </ButtonContainerLeft>
         <ButtonContainerRight>
@@ -682,41 +678,33 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
             <>
               <ButtonSpacer />
               <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newJourney.isInUse ? 'Journey that is in use cannot be deleted' : ''}>
-                <div>
-                  <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse || !canDelete}>
-                    {deleteIcon} Delete
-                  </Button>
-                </div>
+                <Button variant="outlined" onClick={deleteJourney} disabled={newJourney.isInUse || !canDelete}>
+                  {deleteIcon} Delete
+                </Button>
               </Tooltip>
             </>
           )}
           <ButtonSpacer />
           {!newJourney.isVoided && newJourney.id != -1 && (
             <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={duplicateJourney} disabled={!canCreate}>
-                  {duplicateIcon} Duplicate
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={duplicateJourney} disabled={!canCreate}>
+                {duplicateIcon} Duplicate
+              </Button>
             </Tooltip>
           )}
           <ButtonSpacer />
           {newJourney.isVoided && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={unvoidJourney} disabled={!canVoidUnvoid}>
-                  {unvoidIcon} Unvoid
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={unvoidJourney} disabled={!canVoidUnvoid}>
+                {unvoidIcon} Unvoid
+              </Button>
             </Tooltip>
           )}
           {!newJourney.isVoided && newJourney.id != -1 && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={voidJourney} disabled={!canVoidUnvoid}>
-                  {voidIcon} Void
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={voidJourney} disabled={!canVoidUnvoid}>
+                {voidIcon} Void
+              </Button>
             </Tooltip>
           )}
           <ButtonSpacer />
@@ -725,11 +713,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
           </Button>
           <ButtonSpacer />
           <Tooltip title={!canWrite ? insufficientPrivilegesTitle : canSave ? '' : saveTitle}>
-            <div>
-              <Button onClick={handleSave} disabled={(newJourney.isVoided ?? !canSave) || !canWrite}>
-                Save
-              </Button>
-            </div>
+            <Button onClick={handleSave} disabled={(newJourney.isVoided ?? !canSave) || !canWrite}>
+              Save
+            </Button>
           </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>
@@ -906,30 +892,24 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
                     }
                     {(step.id == -1 || (step.isVoided && !step.isInUse)) && (
                       <Tooltip title={!canDelete ? insufficientPrivilegesTitle : 'Delete'}>
-                        <div>
-                          <Button variant="ghost" disabled={!canDelete} onClick={(): Promise<void> => deleteStep(step, index)}>
-                            {deleteIcon}
-                          </Button>
-                        </div>
+                        <Button variant="ghost" disabled={!canDelete} onClick={(): Promise<void> => deleteStep(step, index)}>
+                          {deleteIcon}
+                        </Button>
                       </Tooltip>
                     )}
                     {step.id != -1 && !step.isVoided && (
                       <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-                        <div>
-                          <Button disabled={canSave || !canVoidUnvoid} variant="ghost" onClick={(): Promise<void> => voidStep(step)}>
-                            {voidIcon} Void
-                          </Button>
-                        </div>
+                        <Button disabled={canSave || !canVoidUnvoid} variant="ghost" onClick={(): Promise<void> => voidStep(step)}>
+                          {voidIcon} Void
+                        </Button>
                       </Tooltip>
                     )}
 
                     {step.id != -1 && step.isVoided && (
                       <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-                        <div>
-                          <Button disabled={canSave || !canVoidUnvoid} variant="ghost" onClick={(): Promise<void> => unvoidStep(step)}>
-                            {unvoidIcon} Unvoid
-                          </Button>
-                        </div>
+                        <Button disabled={canSave || !canVoidUnvoid} variant="ghost" onClick={(): Promise<void> => unvoidStep(step)}>
+                          {unvoidIcon} Unvoid
+                        </Button>
                       </Tooltip>
                     )}
                   </FormFieldSpacer>
@@ -952,11 +932,9 @@ const PreservationJourney = (props: PreservationJourneyProps): JSX.Element => {
       {!newJourney.isVoided && (
         <IconContainer>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={addNewStep} disabled={!canCreate}>
-                {addIcon} Add step
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={addNewStep} disabled={!canCreate}>
+              {addIcon} Add step
+            </Button>
           </Tooltip>
         </IconContainer>
       )}

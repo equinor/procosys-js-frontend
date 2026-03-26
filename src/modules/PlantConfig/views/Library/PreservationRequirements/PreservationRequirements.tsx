@@ -33,18 +33,14 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
         <Breadcrumbs>Library / Preservation requirements</Breadcrumbs>
         <IconContainer>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)} disabled={!canCreate}>
-                {addIcon} New requirement type
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)} disabled={!canCreate}>
+              {addIcon} New requirement type
+            </Button>
           </Tooltip>
           <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_DEFINITION)} disabled={!canCreate}>
-                {addIcon} New requirement definition
-              </Button>
-            </div>
+            <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_DEFINITION)} disabled={!canCreate}>
+              {addIcon} New requirement definition
+            </Button>
           </Tooltip>
         </IconContainer>
       </Container>

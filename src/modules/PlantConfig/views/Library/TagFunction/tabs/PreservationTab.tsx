@@ -194,29 +194,23 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
         <ActionContainer>
           {isVoided && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={unvoidTagFunction} disabled={!canVoidUnvoid}>
-                  Unvoid
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={unvoidTagFunction} disabled={!canVoidUnvoid}>
+                Unvoid
+              </Button>
             </Tooltip>
           )}
           {!isVoided && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={voidTagFunction} disabled={!canVoidUnvoid}>
-                  Void
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={voidTagFunction} disabled={!canVoidUnvoid}>
+                Void
+              </Button>
             </Tooltip>
           )}
 
           <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button disabled={!unsavedRequirements || !canWrite} onClick={submitChanges}>
-                Save
-              </Button>
-            </div>
+            <Button disabled={!unsavedRequirements || !canWrite} onClick={submitChanges}>
+              Save
+            </Button>
           </Tooltip>
         </ActionContainer>
       </RightSection>

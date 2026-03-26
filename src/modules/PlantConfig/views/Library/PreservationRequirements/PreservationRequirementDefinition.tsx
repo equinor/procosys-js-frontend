@@ -559,31 +559,25 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
           {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 && (
             <>
               <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
-                <div>
-                  <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef() || !canDelete}>
-                    {deleteIcon} Delete
-                  </Button>
-                </div>
+                <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef() || !canDelete}>
+                  {deleteIcon} Delete
+                </Button>
               </Tooltip>
               <ButtonSpacer />
             </>
           )}
           {newRequirementDefinition.isVoided && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={unvoidRequirementDefinition} disabled={!canVoidUnvoid}>
-                  {unvoidIcon} Unvoid
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={unvoidRequirementDefinition} disabled={!canVoidUnvoid}>
+                {unvoidIcon} Unvoid
+              </Button>
             </Tooltip>
           )}
           {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 && (
             <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
-              <div>
-                <Button variant="outlined" onClick={voidRequirementDefinition} disabled={!canVoidUnvoid}>
-                  {voidIcon} Void
-                </Button>
-              </div>
+              <Button variant="outlined" onClick={voidRequirementDefinition} disabled={!canVoidUnvoid}>
+                {voidIcon} Void
+              </Button>
             </Tooltip>
           )}
           <ButtonSpacer />
@@ -592,11 +586,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
           </Button>
           <ButtonSpacer />
           <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
-            <div>
-              <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid || titleError || !canWrite}>
-                Save
-              </Button>
-            </div>
+            <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid || titleError || !canWrite}>
+              Save
+            </Button>
           </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>

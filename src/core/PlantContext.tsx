@@ -82,7 +82,6 @@ export const PlantContextProvider: React.FC = ({ children }): JSX.Element => {
     const plantsFiltered = user.plants.filter((plant) => plant.id === `PCS$${normalizedPlantId}`);
 
     if (plantsFiltered.length <= 0) {
-      console.error(`PlantID: ${plantId} does not exist. Available plants:`, user.plants);
       // TODO:
       // The changes added to this branch will need to be removed in the near future.
       // The changes here involve adding more console logs aimed at identifying and diagnosing

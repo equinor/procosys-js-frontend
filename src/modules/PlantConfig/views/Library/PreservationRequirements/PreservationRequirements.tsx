@@ -1,9 +1,10 @@
 import { Breadcrumbs, Container, IconContainer } from './PreservationRequirements.style';
 import React, { useEffect, useState } from 'react';
-import { Button } from '@equinor/eds-core-react';
+import { Button, Tooltip } from '@equinor/eds-core-react';
 import EdsIcon from '../../../../../components/EdsIcon';
 import PreservationRequirementDefinition from './PreservationRequirementDefinition';
 import PreservationRequirementType from './PreservationRequirementType';
+import { useLibraryPreservationPermissions } from '../useLibraryPreservationPermissions';
 
 const addIcon = <EdsIcon name="add" size={16} />;
 
@@ -20,6 +21,7 @@ enum NodeTypes {
 
 const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Element => {
   const [nodeType, setNodeType] = useState<NodeTypes>(NodeTypes.REQUIREMENT);
+  const { canCreate, insufficientPrivilegesTitle } = useLibraryPreservationPermissions();
 
   useEffect(() => {
     setNodeType(NodeTypes.REQUIREMENT);
@@ -30,12 +32,20 @@ const PreservationRequirements = (props: PreservationRequirementsProps): JSX.Ele
       <Container>
         <Breadcrumbs>Library / Preservation requirements</Breadcrumbs>
         <IconContainer>
-          <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)}>
-            {addIcon} New requirement type
-          </Button>
-          <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_DEFINITION)}>
-            {addIcon} New requirement definition
-          </Button>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_TYPE)} disabled={!canCreate}>
+                {addIcon} New requirement type
+              </Button>
+            </div>
+          </Tooltip>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button variant="ghost" onClick={(): void => setNodeType(NodeTypes.REQUIREMENT_DEFINITION)} disabled={!canCreate}>
+                {addIcon} New requirement definition
+              </Button>
+            </div>
+          </Tooltip>
         </IconContainer>
       </Container>
     );

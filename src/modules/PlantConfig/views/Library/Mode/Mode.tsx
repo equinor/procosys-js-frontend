@@ -1,5 +1,5 @@
 import { Breadcrumbs, ButtonSpacer, Container, IconContainer, InputContainer } from './Mode.style';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Button, TextField, Typography, Tooltip } from '@equinor/eds-core-react';
 import React, { useEffect, useState } from 'react';
 
 import Checkbox from './../../../../../components/Checkbox';
@@ -8,6 +8,7 @@ import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { useLibraryPreservationPermissions } from '../useLibraryPreservationPermissions';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
 const deleteIcon = <EdsIcon name="delete_to_trash" />;
@@ -57,6 +58,7 @@ const Mode = (props: ModeProps): JSX.Element => {
   }, [props.forceUpdate]);
 
   const { preservationApiClient } = usePlantConfigContext();
+  const { canCreate, canWrite, canDelete, canVoidUnvoid, insufficientPrivilegesTitle } = useLibraryPreservationPermissions();
 
   const cloneMode = (mode: ModeItem): ModeItem => {
     return JSON.parse(JSON.stringify(mode));
@@ -247,9 +249,13 @@ const Mode = (props: ModeProps): JSX.Element => {
       <Container>
         <Breadcrumbs>{baseBreadcrumb}</Breadcrumbs>
         <IconContainer>
-          <Button variant="ghost" onClick={initNewMode}>
-            {addIcon} New mode
-          </Button>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
+                {addIcon} New mode
+              </Button>
+            </div>
+          </Tooltip>
         </IconContainer>
       </Container>
     );
@@ -273,38 +279,58 @@ const Mode = (props: ModeProps): JSX.Element => {
       )}
       <ButtonContainer>
         <ButtonContainerLeft>
-          <Button variant="ghost" onClick={initNewMode}>
-            {addIcon} New mode
-          </Button>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button variant="ghost" onClick={initNewMode} disabled={!canCreate}>
+                {addIcon} New mode
+              </Button>
+            </div>
+          </Tooltip>
         </ButtonContainerLeft>
         <ButtonContainerRight>
           {newMode.isVoided && (
             <>
               <ButtonSpacer />
-              <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse} title={newMode.isInUse ? 'Mode that is in use cannot be deleted' : ''}>
-                {deleteIcon} Delete
-              </Button>
+              <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newMode.isInUse ? 'Mode that is in use cannot be deleted' : ''}>
+                <div>
+                  <Button variant="outlined" onClick={deleteMode} disabled={newMode.isInUse || !canDelete}>
+                    {deleteIcon} Delete
+                  </Button>
+                </div>
+              </Tooltip>
             </>
           )}
           <ButtonSpacer />
           {newMode.isVoided && (
-            <Button variant="outlined" onClick={unvoidMode}>
-              {unvoidIcon} Unvoid
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <div>
+                <Button variant="outlined" onClick={unvoidMode} disabled={!canVoidUnvoid}>
+                  {unvoidIcon} Unvoid
+                </Button>
+              </div>
+            </Tooltip>
           )}
           {!newMode.isVoided && newMode.id != -1 && (
-            <Button variant="outlined" onClick={voidMode}>
-              {voidIcon} Void
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <div>
+                <Button variant="outlined" onClick={voidMode} disabled={!canVoidUnvoid}>
+                  {voidIcon} Void
+                </Button>
+              </div>
+            </Tooltip>
           )}
           <ButtonSpacer />
           <Button variant="outlined" onClick={cancel} disabled={newMode.isVoided}>
             Cancel
           </Button>
           <ButtonSpacer />
-          <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty}>
-            Save
-          </Button>
+          <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button onClick={handleSave} disabled={newMode.isVoided || !isDirty || !canWrite}>
+                Save
+              </Button>
+            </div>
+          </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>
 
@@ -322,14 +348,14 @@ const Mode = (props: ModeProps): JSX.Element => {
             setTitleValue(e.target.value);
           }}
           placeholder="Write here"
-          disabled={newMode.isVoided}
+          disabled={newMode.isVoided || !canWrite}
         />
       </InputContainer>
 
       <InputContainer>
         <Checkbox
           checked={newMode.forSupplier}
-          disabled={newMode.isVoided}
+          disabled={newMode.isVoided || !canWrite}
           onChange={(checked: boolean): void => {
             setForSupplierValue(checked);
           }}

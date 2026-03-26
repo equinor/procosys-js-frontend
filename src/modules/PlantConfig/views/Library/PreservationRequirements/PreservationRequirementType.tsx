@@ -1,5 +1,5 @@
 import { Breadcrumbs, ButtonSpacer, Container, FormFieldSpacer, InputContainer, SelectText } from './PreservationRequirements.style';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Button, TextField, Tooltip, Typography } from '@equinor/eds-core-react';
 import PreservationIcon, { PreservationTypeIcon, preservationIconList } from '@procosys/components/PreservationIcon';
 import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
@@ -10,6 +10,7 @@ import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { useLibraryPreservationPermissions } from '../useLibraryPreservationPermissions';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
 const voidIcon = <EdsIcon name="delete_forever" size={16} />;
@@ -51,6 +52,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
   const [titleError, setTitleError] = useState<string | null>(null);
 
   const { preservationApiClient } = usePlantConfigContext();
+  const { canCreate, canWrite, canDelete, canVoidUnvoid, insufficientPrivilegesTitle } = useLibraryPreservationPermissions();
 
   //Create select items for icons
   useEffect((): void => {
@@ -284,6 +286,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         <ButtonContainerLeft>
           <Button
             variant="ghost"
+            disabled={!canCreate}
             onClick={(): void => {
               initNewRequirementType();
             }}
@@ -292,6 +295,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
           </Button>
           <Button
             variant="ghost"
+            disabled={!canCreate}
             onClick={(): void => {
               initNewRequirementDefinition();
             }}
@@ -302,37 +306,47 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
         <ButtonContainerRight>
           {newRequirementType.isVoided && newRequirementType.id != -1 && (
             <>
-              <Button
-                className="buttonIcon"
-                variant="outlined"
-                onClick={deleteRequirementType}
-                disabled={newRequirementType.isInUse}
-                title={newRequirementType.isInUse ? 'Requirement type that is in use cannot be deleted' : ''}
-              >
-                {deleteIcon} Delete
-              </Button>
+              <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newRequirementType.isInUse ? 'Requirement type that is in use cannot be deleted' : ''}>
+                <div>
+                  <Button className="buttonIcon" variant="outlined" onClick={deleteRequirementType} disabled={newRequirementType.isInUse || !canDelete}>
+                    {deleteIcon} Delete
+                  </Button>
+                </div>
+              </Tooltip>
               <ButtonSpacer />
             </>
           )}
           {newRequirementType.isVoided && (
-            <Button className="buttonIcon" variant="outlined" onClick={unvoidRequirementType}>
-              {unvoidIcon} Unvoid
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <div>
+                <Button className="buttonIcon" variant="outlined" onClick={unvoidRequirementType} disabled={!canVoidUnvoid}>
+                  {unvoidIcon} Unvoid
+                </Button>
+              </div>
+            </Tooltip>
           )}
 
           {!newRequirementType.isVoided && newRequirementType.id != -1 && (
-            <Button className="buttonIcon" variant="outlined" onClick={voidRequirementType}>
-              {voidIcon} Void
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <div>
+                <Button className="buttonIcon" variant="outlined" onClick={voidRequirementType} disabled={!canVoidUnvoid}>
+                  {voidIcon} Void
+                </Button>
+              </div>
+            </Tooltip>
           )}
           <ButtonSpacer />
           <Button variant="outlined" onClick={cancelChanges} disabled={newRequirementType.isVoided}>
             Cancel
           </Button>
           <ButtonSpacer />
-          <Button onClick={handleSave} disabled={newRequirementType.isVoided || !isDirtyAndValid}>
-            Save
-          </Button>
+          <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
+            <div>
+              <Button onClick={handleSave} disabled={newRequirementType.isVoided || !isDirtyAndValid || !canWrite}>
+                Save
+              </Button>
+            </div>
+          </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>
 
@@ -347,7 +361,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
               valueUpdated();
             }}
             placeholder="Write here"
-            disabled={newRequirementType.isVoided}
+            disabled={newRequirementType.isVoided || !canWrite}
           />
         </FormFieldSpacer>
 
@@ -361,7 +375,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
               valueUpdated();
             }}
             placeholder="Write here"
-            disabled={newRequirementType.isVoided}
+            disabled={newRequirementType.isVoided || !canWrite}
           />
         </FormFieldSpacer>
         <FormFieldSpacer style={{ width: '300px' }}>
@@ -376,7 +390,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
               valueUpdated();
             }}
             placeholder="Write here"
-            disabled={newRequirementType.isVoided}
+            disabled={newRequirementType.isVoided || !canWrite}
             variant={titleError && 'error'}
             helperText={titleError}
           />
@@ -390,7 +404,7 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
           }}
           data={iconList}
           label={'Icon'}
-          disabled={newRequirementType.isVoided}
+          disabled={newRequirementType.isVoided || !canWrite}
         >
           {getIconText()}
         </SelectInput>

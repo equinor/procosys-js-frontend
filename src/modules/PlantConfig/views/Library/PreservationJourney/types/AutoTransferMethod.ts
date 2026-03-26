@@ -1,5 +1,5 @@
 export enum AutoTransferMethod {
-    NONE = 'None',
-    RFCC = 'OnRfccSign',
-    RFOC = 'OnRfocSign',
+  NONE = 'None',
+  RFCC = 'OnRfccSign',
+  RFOC = 'OnRfocSign',
 }

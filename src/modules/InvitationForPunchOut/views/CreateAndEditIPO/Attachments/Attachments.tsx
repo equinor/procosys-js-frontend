@@ -10,69 +10,55 @@ import { useDirtyContext } from '@procosys/core/DirtyContext';
 import AttachmentList from '@procosys/components/AttachmentList';
 
 interface AttachmentsProps {
-    attachments: Attachment[];
-    setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+  attachments: Attachment[];
+  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
 }
 
-const Attachments = ({
-    attachments,
-    setAttachments,
-}: AttachmentsProps): JSX.Element => {
-    const { setDirtyStateFor } = useDirtyContext();
+const Attachments = ({ attachments, setAttachments }: AttachmentsProps): JSX.Element => {
+  const { setDirtyStateFor } = useDirtyContext();
 
-    const removeAttachment = (row: TableOptions<Attachment>): void => {
-        const index = row.row.index;
-        if (attachments[index].id) {
-            //Attachments already uploaded will be deleted when ipo i saved
-            attachments[index].toBeDeleted = true;
-            setAttachments([...attachments]);
-        } else {
-            //Attachments not yet uploaded can be removed from the attachments array
-            setAttachments((currentAttachments) => [
-                ...currentAttachments.slice(0, index),
-                ...currentAttachments.slice(index + 1),
-            ]);
-        }
-        setDirtyStateFor(ComponentName.Attachments);
-    };
+  const removeAttachment = (row: TableOptions<Attachment>): void => {
+    const index = row.row.index;
+    if (attachments[index].id) {
+      //Attachments already uploaded will be deleted when ipo i saved
+      attachments[index].toBeDeleted = true;
+      setAttachments([...attachments]);
+    } else {
+      //Attachments not yet uploaded can be removed from the attachments array
+      setAttachments((currentAttachments) => [...currentAttachments.slice(0, index), ...currentAttachments.slice(index + 1)]);
+    }
+    setDirtyStateFor(ComponentName.Attachments);
+  };
 
-    const addAttachments = (files: FileList | null): void => {
-        if (!files) {
-            showSnackbarNotification('No files to upload');
-            return;
-        }
+  const addAttachments = (files: FileList | null): void => {
+    if (!files) {
+      showSnackbarNotification('No files to upload');
+      return;
+    }
 
-        Array.from(files).forEach((file) => {
-            try {
-                fileTypeValidator(file.name);
-                setAttachments((currentAttachments) =>
-                    currentAttachments.concat({
-                        fileName: file.name,
-                        file: file,
-                    })
-                );
-            } catch (error) {
-                showSnackbarNotification(error.message);
-            }
-        });
-        setDirtyStateFor(ComponentName.Attachments);
-    };
+    Array.from(files).forEach((file) => {
+      try {
+        fileTypeValidator(file.name);
+        setAttachments((currentAttachments) =>
+          currentAttachments.concat({
+            fileName: file.name,
+            file: file,
+          })
+        );
+      } catch (error) {
+        showSnackbarNotification(error.message);
+      }
+    });
+    setDirtyStateFor(ComponentName.Attachments);
+  };
 
-    return (
-        <Container>
-            <FormContainer>
-                <AttachmentList
-                    attachments={attachments.filter(
-                        (attachment) => !attachment.toBeDeleted
-                    )}
-                    disabled={false}
-                    addAttachments={addAttachments}
-                    deleteAttachment={removeAttachment}
-                    large={true}
-                />
-            </FormContainer>
-        </Container>
-    );
+  return (
+    <Container>
+      <FormContainer>
+        <AttachmentList attachments={attachments.filter((attachment) => !attachment.toBeDeleted)} disabled={false} addAttachments={addAttachments} deleteAttachment={removeAttachment} large={true} />
+      </FormContainer>
+    </Container>
+  );
 };
 
 export default Attachments;

@@ -8,16 +8,12 @@ snackbarContainer.setAttribute('id', 'notification-snackbar-container');
 document.body.appendChild(snackbarContainer);
 
 interface NotificationProps {
-    message?: string;
-    displayRight: boolean;
+  message?: string;
+  displayRight: boolean;
 }
 
 const Notification = (props: NotificationProps): JSX.Element => {
-    return (
-        <StyledSnackbarNotification displayRight={props.displayRight}>
-            {props.message}
-        </StyledSnackbarNotification>
-    );
+  return <StyledSnackbarNotification displayRight={props.displayRight}>{props.message}</StyledSnackbarNotification>;
 };
 
 /**
@@ -27,18 +23,11 @@ const Notification = (props: NotificationProps): JSX.Element => {
  * @param message Message to display
  * @param duration Duration of notification, in milliseconds
  */
-export const showSnackbarNotification = (
-    message: string,
-    duration = 5000,
-    displayRight = false
-): any => {
-    clearTimeout(lastTimeoutId);
-    render(
-        <Notification message={message} displayRight={displayRight} />,
-        snackbarContainer
-    );
+export const showSnackbarNotification = (message: string, duration = 5000, displayRight = false): any => {
+  clearTimeout(lastTimeoutId);
+  render(<Notification message={message} displayRight={displayRight} />, snackbarContainer);
 
-    lastTimeoutId = window.setTimeout(() => {
-        render(<></>, snackbarContainer);
-    }, duration);
+  lastTimeoutId = window.setTimeout(() => {
+    render(<></>, snackbarContainer);
+  }, duration);
 };

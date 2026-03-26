@@ -1,89 +1,65 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "jest": true
-    },
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:prettier/recommended"
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react"
-    ],
-    "overrides": [
-        {
-            "files": [
-                "**/*.ts",
-                "**/*.tsx"
-            ],
-            "extends": [
-                "plugin:@typescript-eslint/recommended",
-                "plugin:prettier/recommended"
-            ],
-            "plugins": [
-                "@typescript-eslint"
-            ],
-            "rules": {
-                "require-atomic-updates": "off",
-                "@typescript-eslint/explicit-function-return-type": "warn",
-                "@typescript-eslint/no-explicit-any": "off",
-                "@typescript-eslint/no-var-requires": "off",
-                "@typescript-eslint/interface-name-prefix": "off",
-                "@typescript-eslint/explicit-module-boundary-types": "off",
-                // Safe to disable the following rules as TSC will throw, ESLint doesn't understand interfaces properly,
-                // https://github.com/eslint/typescript-eslint-parser/issues/437
-                "@typescript-eslint/no-unused-vars": "off",
-                "@typescript-eslint/ban-ts-comment": ["error",{
-                    "ts-ignore": "allow-with-description"
-                }]
-            }
-        }
-    ],
-    "rules": {
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single",
-            "avoid-escape"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error",
-        "react/react-in-jsx-scope": "error",
-        "react/jsx-filename-extension": [
-            "error",
-            {
-                "extensions": [
-                    ".tsx",
-                    ".jsx"
-                ]
-            }
-        ],
-        "react/display-name": "off"
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:prettier/recommended"],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["react"],
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "extends": ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+      "plugins": ["@typescript-eslint"],
+      "rules": {
+        "require-atomic-updates": "off",
+        "@typescript-eslint/explicit-function-return-type": "warn",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/interface-name-prefix": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        // Safe to disable the following rules as TSC will throw, ESLint doesn't understand interfaces properly,
+        // https://github.com/eslint/typescript-eslint-parser/issues/437
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/ban-ts-comment": [
+          "error",
+          {
+            "ts-ignore": "allow-with-description"
+          }
+        ]
+      }
+    }
+  ],
+  "rules": {
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single", "avoid-escape"],
+    "semi": ["error", "always"],
+    "react/jsx-uses-react": "off",
+    "react/jsx-uses-vars": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [".tsx", ".jsx"]
+      }
+    ],
+    "react/display-name": "off"
+  }
 }

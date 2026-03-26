@@ -7,59 +7,48 @@ import PreservationApiClient from '@procosys/modules/Preservation/http/Preservat
 import { ProjectDetails } from '@procosys/modules/Preservation/types';
 
 type PlantConfigContextProps = {
-    libraryApiClient: LibraryApiClient;
-    preservationApiClient: PreservationApiClient;
-    projects?: ProjectDetails[];
+  libraryApiClient: LibraryApiClient;
+  preservationApiClient: PreservationApiClient;
+  projects?: ProjectDetails[];
 };
 
-const PlantConfigContext = React.createContext<PlantConfigContextProps>(
-    {} as PlantConfigContextProps
-);
+const PlantConfigContext = React.createContext<PlantConfigContextProps>({} as PlantConfigContextProps);
 
-export const PlantConfigContextProvider: React.FC = ({
-    children,
-}): JSX.Element => {
-    const { auth, procosysApiClient } = useProcosysContext();
-    const { plant } = useCurrentPlant();
-    const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
-    const [projects, setProjects] = useState<ProjectDetails[] | undefined>(
-        undefined
-    );
-    const preservationApiClient = useMemo(
-        () => new PreservationApiClient(auth),
-        [auth]
-    );
+export const PlantConfigContextProvider: React.FC = ({ children }): JSX.Element => {
+  const { auth, procosysApiClient } = useProcosysContext();
+  const { plant } = useCurrentPlant();
+  const libraryApiClient = useMemo(() => new LibraryApiClient(auth), [auth]);
+  const [projects, setProjects] = useState<ProjectDetails[] | undefined>(undefined);
+  const preservationApiClient = useMemo(() => new PreservationApiClient(auth), [auth]);
 
-    useMemo(() => {
-        const fetchProjects = async () => {
-            const projects =
-                await procosysApiClient.getAllProjectsForUserAsync();
-            setProjects(projects);
-        };
-        fetchProjects();
-    }, [plant]);
+  useMemo(() => {
+    const fetchProjects = async () => {
+      const projects = await procosysApiClient.getAllProjectsForUserAsync();
+      setProjects(projects);
+    };
+    fetchProjects();
+  }, [plant]);
 
-    useMemo(() => {
-        libraryApiClient.setCurrentPlant(plant.id);
-        preservationApiClient.setCurrentPlant(plant.id);
-    }, [plant]);
+  useMemo(() => {
+    libraryApiClient.setCurrentPlant(plant.id);
+    preservationApiClient.setCurrentPlant(plant.id);
+  }, [plant]);
 
-    return (
-        <PlantConfigContext.Provider
-            value={{
-                libraryApiClient: libraryApiClient,
-                preservationApiClient: preservationApiClient,
-                projects: projects,
-            }}
-        >
-            {children}
-        </PlantConfigContext.Provider>
-    );
+  return (
+    <PlantConfigContext.Provider
+      value={{
+        libraryApiClient: libraryApiClient,
+        preservationApiClient: preservationApiClient,
+        projects: projects,
+      }}
+    >
+      {children}
+    </PlantConfigContext.Provider>
+  );
 };
 
 PlantConfigContextProvider.propTypes = {
-    children: propTypes.node.isRequired,
+  children: propTypes.node.isRequired,
 };
 
-export const usePlantConfigContext = (): PlantConfigContextProps =>
-    React.useContext<PlantConfigContextProps>(PlantConfigContext);
+export const usePlantConfigContext = (): PlantConfigContextProps => React.useContext<PlantConfigContextProps>(PlantConfigContext);

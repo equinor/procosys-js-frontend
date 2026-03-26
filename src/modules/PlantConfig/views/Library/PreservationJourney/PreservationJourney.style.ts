@@ -2,58 +2,58 @@ import styled from 'styled-components';
 import { tokens } from '@equinor/eds-tokens';
 
 export const ButtonSpacer = styled.div`
-    margin-right: calc(var(--grid-unit) * 2);
+  margin-right: calc(var(--grid-unit) * 2);
 `;
 
 export const FormFieldSpacer = styled.div`
-    display: flex;
-    margin-right: calc(var(--grid-unit) * 2);
-    padding-bottom: var(--grid-unit);
+  display: flex;
+  margin-right: calc(var(--grid-unit) * 2);
+  padding-bottom: var(--grid-unit);
 `;
 
 export const InputContainer = styled.div`
-    margin: var(--grid-unit) 0px;
-    display: flex;
-    flex-direction: row;
-    padding: var(--grid-unit);
+  margin: var(--grid-unit) 0px;
+  display: flex;
+  flex-direction: row;
+  padding: var(--grid-unit);
 `;
 
 export const Container = styled.div`
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    padding: var(--grid-unit);
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: var(--grid-unit);
 `;
 
 export const StepsContainer = styled.div`
-    display: grid;
-    grid-template-columns: auto auto auto auto auto;
-    width: fit-content;
-    padding: var(--grid-unit);
-    align-items: flex-end;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  width: fit-content;
+  padding: var(--grid-unit);
+  align-items: flex-end;
 `;
 
 export const IconContainer = styled.div`
-    display: flex;
+  display: flex;
 `;
 
 export const DropdownItem = styled.div`
-    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
-    :hover {
-        background-color: ${tokens.colors.ui.background__light.rgba};
-    }
+  padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 3);
+  :hover {
+    background-color: ${tokens.colors.ui.background__light.rgba};
+  }
 `;
 
 export const ResponsibleDropdownContainer = styled.div`
+  width: 100%;
+  > div {
     width: 100%;
-    > div {
-        width: 100%;
-    }
+  }
 `;
 
 export const Breadcrumbs = styled.section`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: var(--grid-unit);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--grid-unit);
 `;

@@ -6,45 +6,39 @@ import { backToListButton } from './ScopeOverview';
 import { MemoryRouter } from 'react-router-dom';
 
 interface ShowInServiceDialogParams {
-    selectedTags: PreservedTag[];
-    setInService: (tags: PreservedTag[]) => void;
+  selectedTags: PreservedTag[];
+  setInService: (tags: PreservedTag[]) => void;
 }
 
-export const showInServiceDialog = ({
-    selectedTags,
-    setInService,
-}: ShowInServiceDialogParams): void => {
-    const inServiceTags: PreservedTag[] = [];
-    const notInServiceTags: PreservedTag[] = [];
-    selectedTags.map((tag) => {
-        const newTag: PreservedTag = { ...tag };
-        if (tag.readyToBeSetInService) {
-            inServiceTags.push(newTag);
-        } else {
-            notInServiceTags.push(newTag);
-        }
-    });
+export const showInServiceDialog = ({ selectedTags, setInService }: ShowInServiceDialogParams): void => {
+  const inServiceTags: PreservedTag[] = [];
+  const notInServiceTags: PreservedTag[] = [];
+  selectedTags.map((tag) => {
+    const newTag: PreservedTag = { ...tag };
+    if (tag.readyToBeSetInService) {
+      inServiceTags.push(newTag);
+    } else {
+      notInServiceTags.push(newTag);
+    }
+  });
 
-    const inServiceButton = inServiceTags.length > 0 ? 'Set in service' : null;
+  const inServiceButton = inServiceTags.length > 0 ? 'Set in service' : null;
 
-    const handleSetInService = (): void => {
-        if (inServiceTags.length > 0) {
-            setInService(inServiceTags);
-        }
-    };
+  const handleSetInService = (): void => {
+    if (inServiceTags.length > 0) {
+      setInService(inServiceTags);
+    }
+  };
 
-    showModalDialog(
-        'Setting in service',
-        <MemoryRouter>
-            <InServiceDialog
-                inServiceTags={inServiceTags}
-                notInServiceTags={notInServiceTags}
-            />
-        </MemoryRouter>,
-        '80vw',
-        backToListButton,
-        null,
-        inServiceButton,
-        handleSetInService
-    );
+  showModalDialog(
+    'Setting in service',
+    <MemoryRouter>
+      <InServiceDialog inServiceTags={inServiceTags} notInServiceTags={notInServiceTags} />
+    </MemoryRouter>,
+    '80vw',
+    backToListButton,
+    null,
+    inServiceButton,
+    handleSetInService
+  );
 };

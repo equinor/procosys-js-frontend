@@ -1,44 +1,35 @@
 {
-    "compilerOptions": {
-        "resolveJsonModule": true,
-        "module": "ESNext", // or ES2015/ES2020/ES2022
-        "target": "ESNext",
-        "esModuleInterop": true,
-        "lib": ["esnext", "DOM", "DOM.Iterable"],
-        "allowSyntheticDefaultImports": true,
-        "useUnknownInCatchVariables": false,
-        "isolatedModules": true,
-        "allowJs": true,
-        /* Files in the directory specified using the "outDir" compiler option are excluded as
-        *  long as "exclude" property is not specified.
-        *  _Required_ when using allowJs
-        */
-        "skipLibCheck": true,
-        "outDir": "build/",
-        "moduleResolution": "node",
-        "strict": true,
-        "types": ["node", "jest", "@types/jest"],
-        "jsx": "react-jsx",
-        "baseUrl": "./",
-        "paths": {
-            "@procosys/core/*": ["src/core/*"],
-            "@procosys/modules/*": ["src/modules/*"],
-            "@procosys/hooks/*": ["src/hooks/*"],
-            "@procosys/components/*": ["src/components/*"],
-            "@procosys/assets/*": ["src/assets/*"],
-            "@procosys/http/*": ["src/http/*"],
-            "@procosys/util/*": ["src/util/*"],
-        }
-    },
-    "include": [
-        "src/**/*",
-        "./jest.setup.ts",
-        "./jest.config.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "public",
-        "build",
-        "**/*.test.tsx"
-    ],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "ESNext", // or ES2015/ES2020/ES2022
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
+    "isolatedModules": true,
+    "allowJs": true,
+    /* Files in the directory specified using the "outDir" compiler option are excluded as
+     *  long as "exclude" property is not specified.
+     *  _Required_ when using allowJs
+     */
+    "skipLibCheck": true,
+    "outDir": "build/",
+    "moduleResolution": "node",
+    "strict": true,
+    "types": ["node", "jest", "@types/jest"],
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "paths": {
+      "@procosys/core/*": ["src/core/*"],
+      "@procosys/modules/*": ["src/modules/*"],
+      "@procosys/hooks/*": ["src/hooks/*"],
+      "@procosys/components/*": ["src/components/*"],
+      "@procosys/assets/*": ["src/assets/*"],
+      "@procosys/http/*": ["src/http/*"],
+      "@procosys/util/*": ["src/util/*"]
+    }
+  },
+  "include": ["src/**/*", "./jest.setup.ts", "./jest.config.ts"],
+  "exclude": ["node_modules", "public", "build", "**/*.test.tsx"]
 }

@@ -3,127 +3,121 @@ import { tokens } from '@equinor/eds-tokens';
 import { Button } from '@equinor/eds-core-react';
 
 export const Container = styled.div`
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Header = styled.div`
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2)
-        var(--grid-unit) var(--grid-unit);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: calc(var(--grid-unit) * 2) calc(var(--grid-unit) * 2) var(--grid-unit) var(--grid-unit);
 
-    h1 {
-        font-size: calc(var(--grid-unit) * 3);
-        line-height: calc(var(--grid-unit) * 5);
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-        text-decoration: underline;
-    }
+  h1 {
+    font-size: calc(var(--grid-unit) * 3);
+    line-height: calc(var(--grid-unit) * 5);
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    text-decoration: underline;
+  }
 `;
 
 export const HeaderNotification = styled.div`
-    display: flex;
-    align-items: center;
-    padding: calc(var(--grid-unit) * 2);
-    border-bottom: 2px solid
-        ${tokens.colors.infographic.primary__energy_red_13.rgba};
+  display: flex;
+  align-items: center;
+  padding: calc(var(--grid-unit) * 2);
+  border-bottom: 2px solid ${tokens.colors.infographic.primary__energy_red_13.rgba};
 `;
 
 export const NotificationIcon = styled.div`
-    border-radius: 50%;
-    padding: var(--grid-unit) calc(var(--grid-unit) + 2px);
-    background: ${tokens.colors.infographic.primary__energy_red_13.rgba};
+  border-radius: 50%;
+  padding: var(--grid-unit) calc(var(--grid-unit) + 2px);
+  background: ${tokens.colors.infographic.primary__energy_red_13.rgba};
 
-    svg path {
-        color: ${tokens.colors.interactive.danger__resting.rgba};
-    }
+  svg path {
+    color: ${tokens.colors.interactive.danger__resting.rgba};
+  }
 `;
 
 export const StatusText = styled.span`
-    margin: '0 var(--grid-unit)';
+  margin: '0 var(--grid-unit)';
 `;
 export const StatusLabel = styled.div<{ status?: string | null }>`
-    margin-left: calc(var(--grid-unit) * 2);
-    padding: var(--grid-unit);
-    border-radius: calc(var(--grid-unit) * 2);
-    /* todo: conditional formatting when "overdue" */
-    background: ${(props): any =>
-        props.status === 'Active'
-            ? tokens.colors.interactive.primary__selected_highlight.rgba
-            : tokens.colors.ui.background__light.rgba};
+  margin-left: calc(var(--grid-unit) * 2);
+  padding: var(--grid-unit);
+  border-radius: calc(var(--grid-unit) * 2);
+  /* todo: conditional formatting when "overdue" */
+  background: ${(props): any => (props.status === 'Active' ? tokens.colors.interactive.primary__selected_highlight.rgba : tokens.colors.ui.background__light.rgba)};
 
-    span {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-        font-size: calc(var(--grid-unit) * 1.5);
-    }
+  span {
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+    font-size: calc(var(--grid-unit) * 1.5);
+  }
 `;
 
 export const HeaderActions = styled.div`
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-wrap: wrap;
 
-    button {
-        margin-left: var(--grid-unit);
-    }
+  button {
+    margin-left: var(--grid-unit);
+  }
 
-    svg path {
-        color: ${tokens.colors.interactive.primary__resting.rgba};
-    }
+  svg path {
+    color: ${tokens.colors.interactive.primary__resting.rgba};
+  }
 `;
 
 export const Tabs = styled.nav`
-    border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
+  border-bottom: 2px solid ${tokens.colors.ui.background__medium.rgba};
 
-    a {
-        cursor: pointer;
-        display: inline-block;
-        font-weight: 500;
-        padding: calc(var(--grid-unit) * 2);
-        text-decoration: none;
+  a {
+    cursor: pointer;
+    display: inline-block;
+    font-weight: 500;
+    padding: calc(var(--grid-unit) * 2);
+    text-decoration: none;
 
-        &.active {
-            color: ${tokens.colors.interactive.primary__resting.rgba};
-            border-bottom: 2px solid
-                ${tokens.colors.interactive.primary__resting.rgba};
-            margin-bottom: -2px;
-        }
+    &.active {
+      color: ${tokens.colors.interactive.primary__resting.rgba};
+      border-bottom: 2px solid ${tokens.colors.interactive.primary__resting.rgba};
+      margin-bottom: -2px;
     }
+  }
 `;
 
 export const StyledButton = styled(Button)`
-    svg {
-        height: 20px !important;
-        width: 20px !important;
-    }
+  svg {
+    height: 20px !important;
+    width: 20px !important;
+  }
 `;
 
 interface TagProps {
-    isStandardTag: boolean;
+  isStandardTag: boolean;
 }
 export const TagNoContainer = styled.div<TagProps>`
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0px var(--grid-unit);
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0px var(--grid-unit);
 
-    ${(props): any =>
-        !props.isStandardTag &&
-        css`
-            pointer-events: none;
-        `}
+  ${(props): any =>
+    !props.isStandardTag &&
+    css`
+      pointer-events: none;
+    `}
 
-    ${(props): any =>
-        props.isStandardTag &&
-        css`
-            :hover {
-                background-color: ${tokens.colors.ui.background__light.rgba};
-            }
-            cursor: pointer;
-        `}
+  ${(props): any =>
+    props.isStandardTag &&
+    css`
+      :hover {
+        background-color: ${tokens.colors.ui.background__light.rgba};
+      }
+      cursor: pointer;
+    `}
 `;
 
 export const TagsGrid = styled.div`
-    display: flex;
+  display: flex;
 `;

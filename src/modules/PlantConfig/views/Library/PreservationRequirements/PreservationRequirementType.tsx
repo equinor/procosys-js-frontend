@@ -284,24 +284,28 @@ const PreservationRequirementType = (props: PreservationRequirementTypeProps): J
       )}
       <ButtonContainer>
         <ButtonContainerLeft>
-          <Button
-            variant="ghost"
-            disabled={!canCreate}
-            onClick={(): void => {
-              initNewRequirementType();
-            }}
-          >
-            {addIcon} New requirement type
-          </Button>
-          <Button
-            variant="ghost"
-            disabled={!canCreate}
-            onClick={(): void => {
-              initNewRequirementDefinition();
-            }}
-          >
-            {addIcon} New requirement definition
-          </Button>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <Button
+              variant="ghost"
+              disabled={!canCreate}
+              onClick={(): void => {
+                initNewRequirementType();
+              }}
+            >
+              {addIcon} New requirement type
+            </Button>
+          </Tooltip>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <Button
+              variant="ghost"
+              disabled={!canCreate}
+              onClick={(): void => {
+                initNewRequirementDefinition();
+              }}
+            >
+              {addIcon} New requirement definition
+            </Button>
+          </Tooltip>
         </ButtonContainerLeft>
         <ButtonContainerRight>
           {newRequirementType.isVoided && newRequirementType.id != -1 && (

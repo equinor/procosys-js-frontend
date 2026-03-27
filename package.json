@@ -93,7 +93,7 @@
     "@mui/styled-engine-sc": "^5.14.12",
     "@mui/styles": "^5.15.3",
     "@mui/system": "^5.4.1",
-    "@mui/x-date-pickers": "^5.0.20",
+    "@mui/x-date-pickers": "^8.12.0",
     "@storybook/addon-info": "^6.0.0-alpha.2",
     "@types/lodash.debounce": "^4.0.9",
     "ansi-regex": "^6.0.1",

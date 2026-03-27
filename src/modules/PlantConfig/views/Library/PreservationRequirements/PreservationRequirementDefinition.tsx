@@ -1,5 +1,5 @@
 import { Breadcrumbs, ButtonSpacer, Container, FieldsContainer, FormFieldSpacer, FormHeader, IconContainer, InputContainer, SelectText } from './PreservationRequirements.style';
-import { Button, TextField, Typography } from '@equinor/eds-core-react';
+import { Button, TextField, Tooltip, Typography } from '@equinor/eds-core-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import SelectInput, { SelectItem } from '../../../../../components/Select';
 
@@ -13,6 +13,7 @@ import { showSnackbarNotification } from '@procosys/core/services/NotificationSe
 import { tokens } from '@equinor/eds-tokens';
 import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
 import { usePlantConfigContext } from '@procosys/modules/PlantConfig/context/PlantConfigContext';
+import { useLibraryPreservationPermissions } from '../useLibraryPreservationPermissions';
 import { ButtonContainer, ButtonContainerLeft, ButtonContainerRight } from '../Library.style';
 
 const addIcon = <EdsIcon name="add" />;
@@ -116,6 +117,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
   };
 
   const { preservationApiClient } = usePlantConfigContext();
+  const { canCreate, canWrite, canDelete, canVoidUnvoid, insufficientPrivilegesTitle } = useLibraryPreservationPermissions();
 
   const getRequirementTypes = async (): Promise<void> => {
     setIsLoading(true);
@@ -534,55 +536,64 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
       )}
       <ButtonContainer>
         <ButtonContainerLeft>
-          <Button
-            variant="ghost"
-            onClick={(): void => {
-              initNewRequirementType();
-            }}
-          >
-            {addIcon} New requirement type
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={(): void => {
-              initNewRequirementDefinition();
-            }}
-          >
-            {addIcon} New requirement definition
-          </Button>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <Button
+              variant="ghost"
+              disabled={!canCreate}
+              onClick={(): void => {
+                initNewRequirementType();
+              }}
+            >
+              {addIcon} New requirement type
+            </Button>
+          </Tooltip>
+          <Tooltip title={!canCreate ? insufficientPrivilegesTitle : ''}>
+            <Button
+              variant="ghost"
+              disabled={!canCreate}
+              onClick={(): void => {
+                initNewRequirementDefinition();
+              }}
+            >
+              {addIcon} New requirement definition
+            </Button>
+          </Tooltip>
         </ButtonContainerLeft>
         <ButtonContainerRight>
           {newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 && (
             <>
-              <Button
-                variant="outlined"
-                onClick={deleteRequirementDefinition}
-                disabled={!canDeleteReqDef()}
-                title={newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}
-              >
-                {deleteIcon} Delete
-              </Button>
+              <Tooltip title={!canDelete ? insufficientPrivilegesTitle : newRequirementDefinition.isInUse ? 'Requirement definition that is in use or has fields, cannot be deleted.' : ''}>
+                <Button variant="outlined" onClick={deleteRequirementDefinition} disabled={!canDeleteReqDef() || !canDelete}>
+                  {deleteIcon} Delete
+                </Button>
+              </Tooltip>
               <ButtonSpacer />
             </>
           )}
           {newRequirementDefinition.isVoided && (
-            <Button variant="outlined" onClick={unvoidRequirementDefinition}>
-              {unvoidIcon} Unvoid
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <Button variant="outlined" onClick={unvoidRequirementDefinition} disabled={!canVoidUnvoid}>
+                {unvoidIcon} Unvoid
+              </Button>
+            </Tooltip>
           )}
           {!newRequirementDefinition.isVoided && newRequirementDefinition.id != -1 && (
-            <Button variant="outlined" onClick={voidRequirementDefinition}>
-              {voidIcon} Void
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <Button variant="outlined" onClick={voidRequirementDefinition} disabled={!canVoidUnvoid}>
+                {voidIcon} Void
+              </Button>
+            </Tooltip>
           )}
           <ButtonSpacer />
           <Button variant="outlined" onClick={cancelChanges} disabled={newRequirementDefinition.isVoided}>
             Cancel
           </Button>
           <ButtonSpacer />
-          <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid || titleError}>
-            Save
-          </Button>
+          <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
+            <Button onClick={handleSave} disabled={newRequirementDefinition.isVoided || !isDirtyAndValid || titleError || !canWrite}>
+              Save
+            </Button>
+          </Tooltip>
         </ButtonContainerRight>
       </ButtonContainer>
       <InputContainer style={{ marginTop: 'calc(var(--grid-unit) * 3)' }}>
@@ -596,7 +607,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
               setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
             }}
             placeholder="Write here"
-            disabled={newRequirementDefinition.isVoided}
+            disabled={newRequirementDefinition.isVoided || !canWrite}
           />
         </FormFieldSpacer>
         <FormFieldSpacer>
@@ -607,7 +618,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             }}
             data={requirementUsageSelectItems}
             label={'Select usage'}
-            disabled={newRequirementDefinition.isVoided}
+            disabled={newRequirementDefinition.isVoided || !canWrite}
           >
             {(newRequirementDefinition.usage && newRequirementDefinition.usage) || 'Select usage'}
           </SelectInput>
@@ -625,7 +636,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             }}
             data={requirementTypeSelectItems}
             label={'Select requirement type'}
-            disabled={newRequirementDefinition.isVoided}
+            disabled={newRequirementDefinition.isVoided || !canWrite}
           >
             {getSelectedReqTypeText()}
           </SelectInput>
@@ -644,7 +655,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
               setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
             }}
             placeholder="Write here"
-            disabled={newRequirementDefinition.isVoided}
+            disabled={newRequirementDefinition.isVoided || !canWrite}
             variant={titleError ? 'error' : undefined}
             helperText={titleError}
           />
@@ -657,7 +668,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
             }}
             data={intervalSelectItems}
             label={'Set default interval'}
-            disabled={newRequirementDefinition.isVoided}
+            disabled={newRequirementDefinition.isVoided || !canWrite}
           >
             {(newRequirementDefinition.defaultIntervalWeeks > -1 && `${newRequirementDefinition.defaultIntervalWeeks} weeks`) || 'Select interval'}
           </SelectInput>
@@ -677,7 +688,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     }}
                     data={fieldTypesSelectItems}
                     label={'Type'}
-                    disabled={newRequirementDefinition.isVoided || field.id != null || field.isVoided}
+                    disabled={newRequirementDefinition.isVoided || field.id != null || field.isVoided || !canWrite}
                   >
                     {(field.fieldType && field.fieldType) || 'Select field type'}
                   </SelectInput>
@@ -693,7 +704,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                     setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                   }}
                   placeholder="Write here"
-                  disabled={newRequirementDefinition.isVoided || field.isVoided}
+                  disabled={newRequirementDefinition.isVoided || field.isVoided || !canWrite}
                 />
               </FormFieldSpacer>
               {field.fieldType == 'Number' && (
@@ -707,7 +718,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                       setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
                     }}
                     placeholder="Write here"
-                    disabled={newRequirementDefinition.isVoided || field.isVoided}
+                    disabled={newRequirementDefinition.isVoided || field.isVoided || !canWrite}
                   />
                 </FormFieldSpacer>
               )}
@@ -720,7 +731,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 >
                   <Checkbox
                     checked={field.showPrevious}
-                    disabled={newRequirementDefinition.isVoided || field.isVoided}
+                    disabled={newRequirementDefinition.isVoided || field.isVoided || !canWrite}
                     onChange={(checked: boolean): void => {
                       field.showPrevious = checked;
                       setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
@@ -741,23 +752,24 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
               <FormFieldSpacer>
                 {
                   <>
-                    <Button disabled={newRequirementDefinition.isVoided} variant="ghost" onClick={(): void => moveFieldUp(index)}>
+                    <Button disabled={newRequirementDefinition.isVoided || !canWrite} variant="ghost" onClick={(): void => moveFieldUp(index)}>
                       {upIcon}
                     </Button>
-                    <Button disabled={newRequirementDefinition.isVoided} variant="ghost" onClick={(): void => moveFieldDown(index)}>
+                    <Button disabled={newRequirementDefinition.isVoided || !canWrite} variant="ghost" onClick={(): void => moveFieldDown(index)}>
                       {downIcon}
                     </Button>
                   </>
                 }
                 {showDeleteFieldButton(field) && (
-                  <Button disabled={newRequirementDefinition.isVoided} variant="ghost" title="Delete" onClick={(): void => deleteField(index)}>
+                  <Button disabled={newRequirementDefinition.isVoided || !canDelete} variant="ghost" title={!canDelete ? insufficientPrivilegesTitle : 'Delete'} onClick={(): void => deleteField(index)}>
                     {deleteIcon}
                   </Button>
                 )}
                 {!field.isVoided && field.id != null && (
                   <Button
-                    disabled={newRequirementDefinition.isVoided}
+                    disabled={newRequirementDefinition.isVoided || !canVoidUnvoid}
                     variant="ghost"
+                    title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}
                     onClick={(): void => {
                       field.isVoided = true;
                       setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
@@ -768,8 +780,9 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
                 )}
                 {field.isVoided && (
                   <Button
-                    disabled={newRequirementDefinition.isVoided}
+                    disabled={newRequirementDefinition.isVoided || !canVoidUnvoid}
                     variant="ghost"
+                    title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}
                     onClick={(): void => {
                       field.isVoided = false;
                       setNewRequirementDefinition(cloneRequirementDefinition(newRequirementDefinition));
@@ -785,7 +798,7 @@ const PreservationRequirementDefinition = (props: PreservationRequirementDefinit
       </FieldsContainer>
       <InputContainer>
         <IconContainer>
-          <Button disabled={newRequirementDefinition.isVoided} variant="ghost" onClick={(): void => addField()}>
+          <Button disabled={newRequirementDefinition.isVoided || !canCreate} variant="ghost" title={!canCreate ? insufficientPrivilegesTitle : ''} onClick={(): void => addField()}>
             {addIcon} Add field
           </Button>
         </IconContainer>

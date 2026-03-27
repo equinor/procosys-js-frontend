@@ -2,7 +2,7 @@ import { ActionContainer, Container, LeftSection, RightSection } from './Preserv
 import { AxiosResponse, Canceler } from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Button } from '@equinor/eds-core-react';
+import { Button, Tooltip } from '@equinor/eds-core-react';
 import PreservationApiClient from '@procosys/modules/Preservation/http/PreservationApiClient';
 import { RequirementType } from './types';
 import RequirementsWidget from '../../../../../Preservation/components/RequirementsSelector/RequirementsSelector';
@@ -10,6 +10,8 @@ import Spinner from '@procosys/components/Spinner';
 import { showSnackbarNotification } from '@procosys/core/services/NotificationService';
 import { useCurrentPlant } from '@procosys/core/PlantContext';
 import { unsavedChangesConfirmationMessage, useDirtyContext } from '@procosys/core/DirtyContext';
+import { useLibraryPreservationPermissions } from '../../useLibraryPreservationPermissions';
+
 import { useProcosysContext } from '@procosys/core/ProcosysContext';
 
 interface TagFunction {
@@ -48,6 +50,7 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
 
   const { auth } = useProcosysContext();
   const { plant } = useCurrentPlant();
+  const { canWrite, canVoidUnvoid, insufficientPrivilegesTitle } = useLibraryPreservationPermissions();
 
   const apiClient = useMemo(() => {
     const client = new PreservationApiClient(auth);
@@ -185,24 +188,30 @@ const PreservationTab = (props: PreservationTabProps): JSX.Element => {
   return (
     <Container>
       <LeftSection>
-        <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} disabled={isVoided} />
+        <RequirementsWidget requirementTypes={requirementTypes} requirements={requirements} onChange={onRequirementsChanged} disabled={isVoided || !canWrite} />
       </LeftSection>
       <RightSection>
         <ActionContainer>
           {isVoided && (
-            <Button variant="outlined" onClick={unvoidTagFunction}>
-              Unvoid
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <Button variant="outlined" onClick={unvoidTagFunction} disabled={!canVoidUnvoid}>
+                Unvoid
+              </Button>
+            </Tooltip>
           )}
           {!isVoided && (
-            <Button variant="outlined" onClick={voidTagFunction}>
-              Void
-            </Button>
+            <Tooltip title={!canVoidUnvoid ? insufficientPrivilegesTitle : ''}>
+              <Button variant="outlined" onClick={voidTagFunction} disabled={!canVoidUnvoid}>
+                Void
+              </Button>
+            </Tooltip>
           )}
 
-          <Button disabled={!unsavedRequirements} onClick={submitChanges}>
-            Save
-          </Button>
+          <Tooltip title={!canWrite ? insufficientPrivilegesTitle : ''}>
+            <Button disabled={!unsavedRequirements || !canWrite} onClick={submitChanges}>
+              Save
+            </Button>
+          </Tooltip>
         </ActionContainer>
       </RightSection>
     </Container>

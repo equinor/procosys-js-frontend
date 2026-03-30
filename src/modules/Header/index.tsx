@@ -298,7 +298,7 @@ const Header: React.FC = (): JSX.Element => {
                 <DropdownItem>Certificate</DropdownItem>
               </a>
               <a href={`/${params.plant}/Search?searchType=Check%20Lists`}>
-                <DropdownItem>Check lists</DropdownItem>
+                <DropdownItem>Checklists</DropdownItem>
               </a>
               <a href={`/${params.plant}/Search?searchType=Commissioning%20Packages`}>
                 <DropdownItem>Commissioning packages</DropdownItem>

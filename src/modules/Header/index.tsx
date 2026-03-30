@@ -495,8 +495,11 @@ const Header: React.FC = (): JSX.Element => {
               <a href="https://dcp.equinor.com" target="_blank">
                 <DropdownItem>DCP – Digitalized Commissioning Procedure</DropdownItem>
               </a>
+              <a href="https://project.fusion.equinor.com" target="_blank">
+                <DropdownItem>Project Portal – Project information portal</DropdownItem>
+              </a>
               <a href="https://fusion.equinor.com" target="_blank">
-                <DropdownItem>FUSION – Project information portal</DropdownItem>
+                <DropdownItem>Fusion – Information Portal</DropdownItem>
               </a>
               <a href="https://echo.equinor.com" target="_blank">
                 <DropdownItem>Echo inField – Technical data and status</DropdownItem>

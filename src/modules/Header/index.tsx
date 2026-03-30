@@ -489,8 +489,8 @@ const Header: React.FC = (): JSX.Element => {
           )}
           <MenuContainerItem className="compact">
             <OptionsDropdown variant={'ghost'} icon="link">
-              <a href="https://statoilsrm.sharepoint.com/sites/PRDConstructionandCommissioning/SitePages/CCH-DIGITAL.aspx" target="_blank">
-                <DropdownItem>C&amp;C digital toolbox</DropdownItem>
+              <a href="https://statoilsrm.sharepoint.com/sites/ProCoSysPortal" target="_blank">
+                <DropdownItem>ProCoSys Portal – Digital Information Toolbox</DropdownItem>
               </a>
               <a href="https://dcp.equinor.com" target="_blank">
                 <DropdownItem>DCP – Digitalized Commissioning Procedure</DropdownItem>
